@@ -7,6 +7,7 @@ var COFFEE = COFFEE || {};
 COFFEE.customer = (function($) {
 
   $(function() {
+    $("#cust-first-name").focus();
     $("#order-button").click(function(evt) {
       evt.preventDefault();
       var serializedForm = $('#order-form').serializeObject();
