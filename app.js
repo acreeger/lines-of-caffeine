@@ -7,9 +7,20 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path');
+  , path = require('path')
+  , mongoose = require('mongoose');
 
 var app = express();
+
+var mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/caffeine_development';
+
+mongoose.connect(mongoUri, function(err) {
+  if (!err) {
+    console.log('connected to MongoDB');
+  } else {
+    throw err;
+  }
+});
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
