@@ -29,7 +29,9 @@ app.configure('development', function(){
 
 app.get('/', routes.customer);
 
-app.get('/barista',routes.barista)
+app.get('/barista',routes.barista);
+
+app.post('/api/order', routes.recordOrder);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
