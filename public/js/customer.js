@@ -12,6 +12,9 @@ COFFEE.customer = (function($) {
       var serializedForm = $('#order-form').serializeObject();
       var jqxhr = $.post('/api/order',serializedForm).done(function(data) {
         console.log("Success! Got data", data);
+        $("#order-success").modal();
+        //TODO: Reset form
+        //IDEA: Inlcude chance to edit phone number in modal?
       })
       .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened", errorThrown)});
       // console.log("serializedForm", serializedForm);

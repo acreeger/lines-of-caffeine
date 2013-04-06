@@ -6,24 +6,34 @@ block content
       #user-container
         .row
           .span12
-            input#cust-name(type="text", placeholder="Your name...", name="customer[name]")
+            input#cust-name(type="text", placeholder="Your first name...", name="customer[firstName]")
             &nbsp;
-            input#phone-number(type="text", placeholder="Your cell number...", name="customer[number]")
+            input#cust-name(type="text", placeholder="Your last name...", name="customer[lastName]")
+            &nbsp;
+            input#phone-number(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
+      #order-success.modal.hide.fade
+        .modal-header
+          h3 Thank you!
+        .modal-body
+          p We will text you when your drink is almost ready.
+        .modal-footer
+          button.btn.btn-primary(data-dismiss='modal', aria-hidden='true') Close
       #order-container
         .row.order-row
           .span12
             p I would like a&nbsp;
-              select.caff-level(name="order[0][strength]")
+              select.caff-level(name="drinks[0][strength]")
                 option(value="full") full strength
                 option(value="decaf") decaffeinated
                 option(value="half-caff") half caff
               | &nbsp;&nbsp;
-              select.coffee-type(name="order[0][coffeeType]")
+              select.coffee-type(name="drinks[0][drinkType]")
                 option(value="americano") Americano
                 option(value="latte") Caffè latte
-                option(value="latte") Caffè mocha
+                option(value="mocha") Caffè mocha
+                option(value="cappuccino") Cappuccino
               | &nbsp;with&nbsp;
-              select.milk-type(name="order[0][milkType]")
+              select.milk-type(name="drinks[0][milk]")
                 option(value="full-fat") full fat
                 option(value="skim") skim
               | &nbsp;milk.
