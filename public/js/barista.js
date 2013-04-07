@@ -24,7 +24,7 @@ COFFEE.barista = (function($, ich, shared) {
                 var drink = order.drinks[0];
                 var orderForTemplate = {
                   strength: shared.STRENGTH_TYPES[drink.strength] ? shared.STRENGTH_TYPES[drink.strength] : drink.strength,
-                  drinkType: shared.COFFEE_TYPES[drink.drinkType] || drink.drinkType,
+                  drinkType: shared.DRINK_TYPES[drink.drinkType] || drink.drinkType,
                   milk: shared.MILK_TYPES[drink.milk] || drink.milk,
                   name: order.customer.firstName + " " + order.customer.lastName.substring(0,1),
                   status: order.status,

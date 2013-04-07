@@ -1,32 +1,14 @@
 var COFFEE = COFFEE || {};
 
-COFFEE.shared = (function() {
+COFFEE.initShared = function(drinkTypes, strengthTypes, milkTypes) {
 
-  var COFFEE_TYPES = {
-    "americano": "Americano"
-    , "latte": "Caffè latte"
-    , "mocha": "Caffè mocha"
-    , "cappuccino": "Cappuccino"
-    , "chai": "Chai latte"
-    , "espresso": "Espresso"
-    , "dry-cappuccino": "dry Cappuccino"
-  };
-
-  var MILK_TYPES = {
-    "full-fat": "full fat"
-    , "skim": "skim"
-    , "none": "no"
-  };
-
-  var STRENGTH_TYPES = {
-    "full": "full strength"
-    , "decaf": "decaffeinated"
-    , "half-caff": "half caff"
-  };
+  var DRINK_TYPES = drinkTypes;
+  var STRENGTH_TYPES = strengthTypes;
+  var MILK_TYPES = milkTypes;
 
   return {
-    COFFEE_TYPES : COFFEE_TYPES
+    DRINK_TYPES : DRINK_TYPES
     , MILK_TYPES : MILK_TYPES
     , STRENGTH_TYPES : STRENGTH_TYPES
   };
-})(jQuery);
+}

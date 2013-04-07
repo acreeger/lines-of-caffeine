@@ -1,6 +1,10 @@
 var mongoose = require('mongoose')
   , DrinkOrder = mongoose.model('DrinkOrder')
-  , constants = require('../models/constants').order
+  , constants = require('../models/constants')
+  , orderConstants = constants.order
+  , twilioService = require('../services/twilio-service.js')
+  , _s = require('underscore.string')
+
 
 exports.create = function(req, res) {
   var reqBody = req.body;
@@ -30,14 +34,14 @@ exports.request = function(req, res) {
   var numberOfBaristas = req.query['num_baristas'] || 2;
   var orders = [];
   var ordersRequired = numberOfBaristas;
-  var q = DrinkOrder.find({status:constants.STATUS_IN_PRODUCTION}).limit(numberOfBaristas).sort('date').exec(function(err, inProdOrders) {
+  var q = DrinkOrder.find({status:orderConstants.STATUS_IN_PRODUCTION}).limit(numberOfBaristas).sort('date').exec(function(err, inProdOrders) {
     while(ordersRequired > 0 && inProdOrders.length > 0) {
       var order = inProdOrders.splice(0, 1)[0];
       orders.push(order);
       ordersRequired = numberOfBaristas - orders.length
     }
     if (ordersRequired > 0) {
-      DrinkOrder.find({status:constants.STATUS_NEW}).limit(ordersRequired).sort('date').exec(function(err, newOrders) {
+      DrinkOrder.find({status:orderConstants.STATUS_NEW}).limit(ordersRequired).sort('date').exec(function(err, newOrders) {
         orders = orders.concat(newOrders);
         res.json(orders);
       });
@@ -50,11 +54,23 @@ exports.request = function(req, res) {
 exports.start = function(req, res) {
   var id = req.params.id;
   console.log("in start with id:",id)
-  DrinkOrder.findOneAndUpdate({"_id":id, status: constants.STATUS_NEW}, {status: constants.STATUS_IN_PRODUCTION}, function(err,order){
+  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_NEW}, {status: orderConstants.STATUS_IN_PRODUCTION}, function(err,order){
     if (err) {
       res.json(500, {success:false,data:{error:err}});
     } else if (order) {
       console.log("Updated order",order._id,"to status:",order.status);
+      var smsToNumber = order.customer.cellPhone
+      if (smsToNumber && smsToNumber.length == 10) {
+        smsToNumber = "+1" + smsToNumber;
+        var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
+        var smsMessage = _s.sprintf("Hi %s! Your %s will be ready soon, please come grab it! Lots of love, C.O.F.F.E.E.",
+                                      order.customer.firstName
+                                    , drinkType
+                                    );
+        twilioService.sendSMS(smsMessage, smsToNumber);
+      } else {
+        console.log("Not sending SMS to %s as it doesn't appear to be a valid number", smsToNumber)
+      }
       res.json({success:true, data: order})
     } else {
       DrinkOrder.findById(id, function(err, order) {

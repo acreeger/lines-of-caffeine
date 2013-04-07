@@ -7,7 +7,8 @@ var express = require('express')
   , fs = require('fs')
   , http = require('http')
   , path = require('path')
-  , mongoose = require('mongoose');
+  , mongoose = require('mongoose')
+  , constants = require(__dirname + '/models/constants');
 
 var app = express();
 
@@ -24,7 +25,7 @@ mongoose.connect(mongoUri, function(err) {
 // Bootstrap models
 var models_path = __dirname + '/models'
 fs.readdirSync(models_path).forEach(function (file) {
-  console.log("Reading model",file)
+  // console.log("Reading model",file)
   require(models_path+'/'+file)
 })
 
@@ -36,6 +37,12 @@ app.configure(function(){
   app.set('view engine', 'jade');
   app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
   app.use(express.logger('dev'));
+  app.use(function(req, res, next){
+    res.locals.drinkTypes = constants.drinkTypes;
+    res.locals.strengthTypes = constants.strengthTypes;
+    res.locals.milkTypes = constants.milkTypes;
+    next();
+  });
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(app.router);
