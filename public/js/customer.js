@@ -18,8 +18,19 @@ COFFEE.customer = (function($) {
         });
         //IDEA: Inlcude chance to edit phone number in modal?
       })
-      .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened", errorThrown)});
-      // console.log("serializedForm", serializedForm);
+      .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened", errorThrown)});        
+    });
+    var $strengthSelect = $(".caff-level");
+
+    $(".coffee-type").change(function () {
+      var $this = $(this);
+      var caffeineOnly = $this.find("option").filter(":selected").hasClass("caffeine-only");
+      var opacity = caffeineOnly ? 0.3 : 1.0;
+      if (caffeineOnly) {
+        $strengthSelect.val("full");
+      }
+      $strengthSelect.prop("disabled", caffeineOnly);
+      $strengthSelect.fadeTo(200, opacity);
     });
   });
 
