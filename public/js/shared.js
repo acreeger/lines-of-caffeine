@@ -7,6 +7,8 @@ COFFEE.shared = (function() {
     , "latte": "Caffè latte"
     , "mocha": "Caffè mocha"
     , "cappuccino": "Cappuccino"
+    , "chai": "Chai latte"
+    , "espresso": "espresso"
   };
 
   var MILK_TYPES = {
