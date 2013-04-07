@@ -10,11 +10,15 @@ COFFEE.customer = (function($) {
     $("#cust-first-name").focus();
     $("#order-button").click(function(evt) {
       evt.preventDefault();
+      var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
       var serializedForm = $('#order-form').serializeObject();
+      $disabledElems.prop("disabled", true);
       var jqxhr = $.post('/api/order',serializedForm).done(function(data) {
         console.log("Success! Got data", data);
         $("#order-success").modal().one("hide",function() {
           $(".customer-data").val('');
+          $(".order-row select option").filter(":selected").prop("selected", false);
+          $disabledElems.prop("disabled",false).fadeTo(100,1.0);
         });
         //IDEA: Inlcude chance to edit phone number in modal?
       })
