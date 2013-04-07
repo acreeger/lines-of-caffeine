@@ -31,12 +31,16 @@ fs.readdirSync(models_path).forEach(function (file) {
 
 var routes = require('./routes')
 
+app.configure('development', function(){
+  app.use(express.errorHandler());
+  app.use(express.logger('dev'));
+});
+
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.use(express.favicon(__dirname + '/public/img/favicon.ico'));
-  app.use(express.logger('dev'));
   app.use(function(req, res, next){
     res.locals.drinkTypes = constants.drinkTypes;
     res.locals.strengthTypes = constants.strengthTypes;
@@ -47,10 +51,6 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
-});
-
-app.configure('development', function(){
-  app.use(express.errorHandler());
 });
 
 app.get('/', routes.customer);
