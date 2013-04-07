@@ -1,6 +1,7 @@
 var mongoose = require('mongoose')
   , env = process.env.NODE_ENV || 'development'
   , Schema = mongoose.Schema
+  , constants = require('./constants').order;
 
 var DrinkOrderSchema = new Schema({
   customer : {
@@ -14,6 +15,7 @@ var DrinkOrderSchema = new Schema({
     milk : String,
     specialInstructions : String
   }],
+  status : {type: String, default: constants.STATUS_NEW},
   date: { type: Date, default: Date.now },
 });
 

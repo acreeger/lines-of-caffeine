@@ -1,6 +1,52 @@
 extends layout
 
+block head
+  link(rel="stylesheet", media='screen', href='/stylesheets/barista.css')
+
 block content
-  script(type="text/html")    
-  h1= title
-  p Welcome to #{title}
+  script#orderTemplate(type="text/html").
+    <div class="order">
+      <p class="drink">
+        <strong class="coffee-strength">{{strength}}</strong>
+        <strong class="coffee-type">{{drinkType}}</strong>&nbsp;with
+        <strong>{{milk}}</strong>
+        milk for
+        <strong>{{name}}</strong>
+      </p>
+    </div>
+  .container
+    .row
+      .span6
+        h1.text-left C.O.F.F.E.E
+      .span6
+        h3.text-right Barista View
+    .row
+      .span12 Number of orders:&nbsp;&nbsp;
+        strong
+          span#orderCount 0
+  #order-info-container
+    //- TODO: Do this in a mixin and interate (using numberOfBaristas)
+    #barista0
+      .container
+        .row
+          .span12
+            h3.barista-title Barista #1
+        .row
+          .span12
+            .no-orders.hide
+              h4 Nothing for you to make at the moment...
+            .orders
+    //- #barista2
+    //-   .container
+    //-     .row
+    //-       .span12
+    //-         h3.barista-title Barista #2
+    //-           .no-orders
+    //-             h4 No orders just yet...
+
+
+block late-scripts
+  script(src="js/barista.js")
+  //- TODO: Make num-baristas dynamic
+  script
+    COFFEE.barista.init(1);

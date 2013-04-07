@@ -6,15 +6,12 @@ html
     link(rel='stylesheet', media='screen', href='/stylesheets/bootstrap-responsive.min.css') 
     link(rel='stylesheet', media='screen', href='/stylesheets/style.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    block head
   body
-    .container
-      .row
-        .span12
-          h1.text-left C.O.F.F.E.E
-          h3.text-left Caffeine Ordering For Fast Employee Enjoyment
     block content
     //- img#logo(src="img/akqa-logo.png")
     script(src='http://code.jquery.com/jquery.min.js')
     script(src='js/bootstrap.min.js')
     script(src="js/ICanHaz.min.js")
+    script(src="js/shared.js")
     block late-scripts  

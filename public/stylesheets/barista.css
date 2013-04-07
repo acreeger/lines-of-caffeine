@@ -1,0 +1,27 @@
+html, body {
+	background-color: black;
+	color:white;
+	height: auto;
+	min-height: 100%;
+}
+
+#order-info-container {
+	height: 100%;
+	/*border: 1px solid silver;*/
+}
+
+.barista-title {
+	color:#ccc;
+}
+
+/*.coffee-strength {
+	padding-right: 5px;
+}
+*/
+.drink:first-letter {
+	text-transform: capitalize;
+}
+
+.order {
+	font-size: 36px;
+}

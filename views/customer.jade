@@ -2,15 +2,19 @@ extends layout
 
 block content
   .container
+    .row
+      .span12
+        h1.text-left C.O.F.F.E.E
+        h3.text-left Caffeine Ordering For Fast Employee Enjoyment
     form#order-form.form-inline
       #user-container
         .row
           .span12
-            input#cust-first-name(type="text", placeholder="Your first name...", name="customer[firstName]")
+            input#cust-first-name.customer-data(type="text", placeholder="Your first name...", name="customer[firstName]")
             &nbsp;
-            input#cust-last-name(type="text", placeholder="Your last name...", name="customer[lastName]")
+            input#cust-last-name.customer-data(type="text", placeholder="Your last name...", name="customer[lastName]")
             &nbsp;
-            input#phone-number(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
+            input#phone-number.customer-data(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
       #order-success.modal.hide.fade
         .modal-header
           h3 Thank you!
@@ -36,6 +40,7 @@ block content
               select.milk-type(name="drinks[0][milk]")
                 option(value="full-fat") full fat
                 option(value="skim") skim
+                option(value="none") no
               | &nbsp;milk.
         .row
           .span1
