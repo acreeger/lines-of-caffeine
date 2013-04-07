@@ -31,6 +31,7 @@ COFFEE.barista = (function($, ich, shared) {
           console.log("i at the end",i,"numberOfBaristas",numberOfBaristas);
           while(i < numberOfBaristas) {
             $("#barista" + i + " .no-orders").show();
+            i++;
           } 
         }
       });

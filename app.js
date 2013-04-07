@@ -48,7 +48,7 @@ app.configure('development', function(){
 
 app.get('/', routes.customer);
 
-app.get('/barista',routes.barista);
+app.get('/barista/:numberOfBaristas?',routes.barista);
 
 app.post('/api/order', routes.drinkOrder.create);
 app.get('/api/order/request', routes.drinkOrder.request);

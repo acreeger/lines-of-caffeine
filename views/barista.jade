@@ -25,28 +25,21 @@ block content
         strong
           span#orderCount 0
   #order-info-container
-    //- TODO: Do this in a mixin and interate (using numberOfBaristas)
-    #barista0
-      .container
-        .row
-          .span12
-            h3.barista-title Barista #1
-        .row
-          .span12
-            .no-orders.hide
-              h4 Nothing for you to make at the moment...
-            .orders
-    //- #barista2
-    //-   .container
-    //-     .row
-    //-       .span12
-    //-         h3.barista-title Barista #2
-    //-           .no-orders
-    //-             h4 No orders just yet...
-
+    mixin barista-view(baristaNumber)
+      div(id="barista#{baristaNumber}")
+        .container
+          .row
+            .span12
+              h3.barista-title Barista ##{baristaNumber + 1}
+          .row
+            .span12
+              .no-orders.hide
+                h4 Nothing for you to make at the moment...
+              .orders
+    - for(var i=0;i<numberOfBaristas;i++)
+      mixin barista-view(i)
 
 block late-scripts
-  script(src="js/barista.js")
-  //- TODO: Make num-baristas dynamic
+  script(src="/js/barista.js")
   script
-    COFFEE.barista.init(1);
+    COFFEE.barista.init(#{numberOfBaristas});

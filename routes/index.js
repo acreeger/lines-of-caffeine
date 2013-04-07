@@ -9,7 +9,8 @@ exports.customer = function(req, res){
 };
 
 exports.barista = function(req, res) {
-	res.render('barista', {title: 'Lines of Caffeine - Barista View'})
+  var numberOfBaristas = req.params.numberOfBaristas || 2 //DEFAULT IS 2
+	res.render('barista', {title: 'Lines of Caffeine - Barista View', numberOfBaristas: numberOfBaristas })
 };
 
 exports.drinkOrder = require('./drink-orders');
