@@ -23,5 +23,21 @@ html, body {
 }
 
 .order {
-	font-size: 36px;
+	font-size: 28px;
+}
+
+.order-action-buttons {
+	text-align: right;
+}
+.mark-as-problem {
+	margin-left: 20px;
+	/*background-image: -webkit-linear-gradient(top,#fffeb8,#c49c38);*/
+}
+
+.status-new .mark-as-done {
+	display: none;
+}
+
+.status-in-production .mark-as-started {
+	display: none;
 }

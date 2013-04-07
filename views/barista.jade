@@ -5,14 +5,19 @@ block head
 
 block content
   script#orderTemplate(type="text/html").
-    <div class="order">
-      <p class="drink">
+    <div id="order-{{id}}" data-order-id="{{id}}" class="order status-{{status}}">
+      <p class="span9 drink">
         <strong class="coffee-strength">{{strength}}</strong>
         <strong class="coffee-type">{{drinkType}}</strong>&nbsp;with
         <strong>{{milk}}</strong>
         milk for
         <strong>{{name}}</strong>
       </p>
+      <div class="span3 order-action-buttons">
+        <button class="mark-as-done btn btn-success"><i class="icon-ok-sign icon-large"></i>&nbsp;Done!</button>
+        <button class="mark-as-started btn btn-primary"><i class="icon-play icon-large"></i>&nbsp;Start!</button>
+        <button class="mark-as-problem btn btn-warning"><i class="icon-exclamation-sign icon-large"></i>&nbsp;Problem!</button>
+      </div>
     </div>
   .container
     .row
@@ -26,16 +31,16 @@ block content
           span#orderCount 0
   #order-info-container
     mixin barista-view(baristaNumber)
-      div(id="barista#{baristaNumber}")
+      div.barista-area(id="barista#{baristaNumber}")
         .container
           .row
             .span12
               h3.barista-title Barista ##{baristaNumber + 1}
           .row
-            .span12
-              .no-orders.hide
+            .no-orders.hide
+              .span12
                 h4 Nothing for you to make at the moment...
-              .orders
+            .orders
     - for(var i=0;i<numberOfBaristas;i++)
       mixin barista-view(i)
 

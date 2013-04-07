@@ -52,6 +52,8 @@ app.get('/barista/:numberOfBaristas?',routes.barista);
 
 app.post('/api/order', routes.drinkOrder.create);
 app.get('/api/order/request', routes.drinkOrder.request);
+app.post('/api/order/:id/start', routes.drinkOrder.start);
+app.post('/api/order/:id/assign/:assignee', routes.drinkOrder.assign);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));

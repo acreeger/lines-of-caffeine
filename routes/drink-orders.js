@@ -46,3 +46,42 @@ exports.request = function(req, res) {
     }
   });
 }
+
+exports.start = function(req, res) {
+  var id = req.params.id;
+  console.log("in start with id:",id)
+  DrinkOrder.findOneAndUpdate({"_id":id, status: constants.STATUS_NEW}, {status: constants.STATUS_IN_PRODUCTION}, function(err,order){
+    if (err) {
+      res.json(500, {success:false,data:{error:err}});
+    } else if (order) {
+      console.log("Updated order",order._id,"to status:",order.status);
+      res.json({success:true, data: order})
+    } else {
+      DrinkOrder.findById(id, function(err, order) {
+        if (err) {
+          res.json(500, {success:false,data:{error:err}});
+        }
+        if (order) {
+          res.json(500, {success:false,data:{error:"Order has unexpected status: " + order.status}});    
+        } else {
+          res.json(404, {success:false,data:{error:"Order cannot be found: " + id}});
+        }
+      });      
+    }
+  });
+}
+
+exports.assign = function(req, res) {
+  var id = req.params.id;
+  var assignee = req.params.assignee;
+
+  DrinkOrder.findByIdAndUpdate(id, {"assignee": assignee}, function(err, order) {
+    if (err) {
+      res.json(500, {success:false,data:{error:err}});
+    } else if (order) {
+      res.json({success:true, data: order})
+    } else {
+      res.json(404, {success:false,data:{error:"Order cannot be found: " + id}});
+    }
+  });
+}

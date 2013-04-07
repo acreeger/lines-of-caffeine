@@ -16,6 +16,8 @@ var DrinkOrderSchema = new Schema({
     specialInstructions : String
   }],
   status : {type: String, default: constants.STATUS_NEW},
+  station : {type: String, default: "1"},
+  assignee : {type: Number, default: -1},
   date: { type: Date, default: Date.now },
 });
 
