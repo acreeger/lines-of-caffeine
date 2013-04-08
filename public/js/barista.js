@@ -38,11 +38,10 @@ COFFEE.barista = (function($, ich, shared) {
   //returns true if order was assigned
   function assignOrderToFirstAvailableBarista(order) {
     var availableBaristas = getAvailableBaristas();
-    console.log("assignOrderToFirstAvailableBarista: availableBaristas",availableBaristas);
     var result = false
     if (availableBaristas.length > 0) {
       var firstBaristaId = availableBaristas[0];
-      console.log("assignOrderToFirstAvailableBarista: assigning order %s to barista %d",order._id, firstBaristaId);
+      // console.log("assignOrderToFirstAvailableBarista: assigning order %s to barista %d",order._id, firstBaristaId);
       result = true;
       assignOrderToBarista(order, firstBaristaId);
     }
@@ -152,7 +151,6 @@ COFFEE.barista = (function($, ich, shared) {
       //assignOrderToFirstAvailableBarista() relies upon unassignedBaristasCount being updated in real time.
       while(ordersToBeAssigned.length > 0) {
         var order = ordersToBeAssigned.splice(0,1)[0];
-        console.log("processing order that needs to be assigned:",order);
         assignOrderToFirstAvailableBarista(order);
       }
 
