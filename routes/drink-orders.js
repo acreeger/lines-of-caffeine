@@ -45,34 +45,50 @@ function getAssignedOrders(count, cb) {
   getOrdersForStatus(orderConstants.STATUS_ASSIGNED, count, cb);
 }
 
+function getInProductionOrders(count, cb) {
+  getOrdersForStatus(orderConstants.STATUS_IN_PRODUCTION, count, cb);
+}
+
 exports.request = function(req, res) {
-  var numberOfBaristas = req.query['num_baristas'] || 2;
-  var orders = [];
-  var ordersRequired = numberOfBaristas;
-  var q = DrinkOrder.find({status:orderConstants.STATUS_IN_PRODUCTION}).limit(numberOfBaristas).sort('date').exec(function(err, inProdOrders) {
-    while(ordersRequired > 0 && inProdOrders.length > 0) {
-      var order = inProdOrders.splice(0, 1)[0];
-      orders.push(order);
-      ordersRequired = numberOfBaristas - orders.length
-    }
-    //TODO: Iterate through a list instead of this - its a bit clumsy
-    if (ordersRequired > 0) {
-      getAssignedOrders(ordersRequired, function(err, assignedOrders) {
-        orders = orders.concat(assignedOrders);
-        ordersRequired = numberOfBaristas - orders.length
-        if (ordersRequired > 0) {
-          getNewOrders(ordersRequired, function(err, newOrders) {
-            orders = orders.concat(newOrders);
-            res.json(orders);
-          });
-        } else {
-          res.json(orders);
-        }
-      })
+  var ordersRequired = req.query['count'] || 2;
+  var newOnly = req.query['new_only'] == "true";
+
+  var returnResults = function(err, orders) {
+    if (err) {
+      logError(res, err);
     } else {
       res.json(orders);
     }
-  });
+  }
+
+  if (newOnly) {
+    getNewOrders(ordersRequired, returnResults);
+  } else {
+    var orders = [];
+    getInProductionOrders(ordersRequired, function(err, inProdOrders) {
+      orders = orders.concat(inProdOrders);
+      ordersRequired -= orders.length;
+
+      //TODO: Iterate through a list instead of this - its a bit clumsy
+      if (ordersRequired > 0) {
+        getAssignedOrders(ordersRequired, function(err, assignedOrders) {
+          orders = orders.concat(assignedOrders);
+          ordersRequired -= orders.length
+          if (ordersRequired > 0) {
+            getNewOrders(ordersRequired, function(err, newOrders) {
+              console.log("in newOrders handler")
+              orders = orders.concat(newOrders);
+              returnResults(err, orders);
+            });
+          } else {
+            res.json(orders);
+          }
+        })
+      } else {
+        res.json(orders);
+      }
+    });
+  }
 }
 
 exports.start = function(req, res) {
@@ -113,7 +129,6 @@ exports.start = function(req, res) {
 
 exports.complete = function(req, res) {
   var id = req.params.id;
-  console.log("in complete with id:",id)
   DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_IN_PRODUCTION}, {status: orderConstants.STATUS_COMPLETE}, function(err,order) {
     if (err) {
       logError(res, err)
