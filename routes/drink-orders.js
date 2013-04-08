@@ -5,6 +5,9 @@ var mongoose = require('mongoose')
   , twilioService = require('../services/twilio-service.js')
   , _s = require('underscore.string')
 
+function logError(res,err) {
+  res.json(500, {success:false,data:{error:err}});
+}
 
 exports.create = function(req, res) {
   var reqBody = req.body;
@@ -30,6 +33,18 @@ exports.create = function(req, res) {
 
 //TODO: counts of new orders
 
+function getOrdersForStatus(status, count, cb) {
+  DrinkOrder.find({status:status}).limit(count).sort('date').exec(cb);
+}
+
+function getNewOrders(count, cb) {
+  getOrdersForStatus(orderConstants.STATUS_NEW, count, cb);
+}
+
+function getAssignedOrders(count, cb) {
+  getOrdersForStatus(orderConstants.STATUS_ASSIGNED, count, cb);
+}
+
 exports.request = function(req, res) {
   var numberOfBaristas = req.query['num_baristas'] || 2;
   var orders = [];
@@ -40,11 +55,20 @@ exports.request = function(req, res) {
       orders.push(order);
       ordersRequired = numberOfBaristas - orders.length
     }
+    //TODO: Iterate through a list instead of this - its a bit clumsy
     if (ordersRequired > 0) {
-      DrinkOrder.find({status:orderConstants.STATUS_NEW}).limit(ordersRequired).sort('date').exec(function(err, newOrders) {
-        orders = orders.concat(newOrders);
-        res.json(orders);
-      });
+      getAssignedOrders(ordersRequired, function(err, assignedOrders) {
+        orders = orders.concat(assignedOrders);
+        ordersRequired = numberOfBaristas - orders.length
+        if (ordersRequired > 0) {
+          getNewOrders(ordersRequired, function(err, newOrders) {
+            orders = orders.concat(newOrders);
+            res.json(orders);
+          });
+        } else {
+          res.json(orders);
+        }
+      })
     } else {
       res.json(orders);
     }
@@ -53,8 +77,8 @@ exports.request = function(req, res) {
 
 exports.start = function(req, res) {
   var id = req.params.id;
-  console.log("in start with id:",id)
-  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_NEW}, {status: orderConstants.STATUS_IN_PRODUCTION}, function(err,order){
+  // console.log("in start with id:",id)
+  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_ASSIGNED}, {status: orderConstants.STATUS_IN_PRODUCTION}, function(err,order){
     if (err) {
       res.json(500, {success:false,data:{error:err}});
     } else if (order) {
@@ -87,15 +111,62 @@ exports.start = function(req, res) {
   });
 }
 
+exports.complete = function(req, res) {
+  var id = req.params.id;
+  console.log("in complete with id:",id)
+  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_IN_PRODUCTION}, {status: orderConstants.STATUS_COMPLETE}, function(err,order) {
+    if (err) {
+      logError(res, err)
+    } else if (order) {
+      console.log("Updated order",order._id,"to status:",order.status);
+      getNewOrders(1, function(err, newOrders) {
+        if (err) {
+          logError(res, err);
+        } else {
+          var nextOrder = null;
+          if (newOrders.length > 0) {
+            nextOrder = newOrders[0];
+          }
+          res.json({success:true, data: {oldOrder: order, nextOrder: nextOrder}})
+        }
+      });
+    } else {
+      //Tell the client why we couldn't find the order
+      DrinkOrder.findById(id, function(err, order) {
+        if (err) {
+          logError(res, err);
+        } else if (order) {
+          res.json(500, {success:false,data:{error:"Order has unexpected status: " + order.status}});
+        } else {
+          res.json(404, {success:false,data:{error:"Order cannot be found: " + id}});
+        }
+      });
+    }
+  });
+}
+
+
 exports.assign = function(req, res) {
   var id = req.params.id;
   var assignee = req.params.assignee;
 
-  DrinkOrder.findByIdAndUpdate(id, {"assignee": assignee}, function(err, order) {
+  DrinkOrder.findById(id, function(err, order) {
     if (err) {
-      res.json(500, {success:false,data:{error:err}});
+      logError(res, err)
     } else if (order) {
-      res.json({success:true, data: order})
+      var updates = {
+        "assignee": assignee
+      }
+
+      if (order.status === orderConstants.STATUS_NEW) updates["status"] = orderConstants.STATUS_ASSIGNED;
+
+      DrinkOrder.findByIdAndUpdate(order._id, updates, function(err, order) {
+        if (err) {
+          logError(res, err);
+        } else {
+          res.json({success:true, data: order})
+        }
+      })
     } else {
       res.json(404, {success:false,data:{error:"Order cannot be found: " + id}});
     }

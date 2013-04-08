@@ -14,9 +14,9 @@ block content
         <strong>{{name}}</strong>
       </p>
       <div class="span3 order-action-buttons">
-        <button class="mark-as-done btn btn-success"><i class="icon-ok-sign icon-large"></i>&nbsp;Done!</button>
-        <button class="mark-as-started btn btn-primary"><i class="icon-play icon-large"></i>&nbsp;Start!</button>
-        <button class="mark-as-problem btn btn-warning"><i class="icon-exclamation-sign icon-large"></i>&nbsp;Problem!</button>
+        <button data-action-type="complete" class="mark-as-done btn btn-success"><i class="icon-ok-sign icon-large"></i>&nbsp;Done!</button>
+        <button data-action-type="start" class="mark-as-started btn btn-primary"><i class="icon-play icon-large"></i>&nbsp;Start!</button>
+        <button data-action-type="abort" class="mark-as-problem btn btn-warning"><i class="icon-exclamation-sign icon-large"></i>&nbsp;Problem!</button>
       </div>
     </div>
   .container
@@ -31,7 +31,7 @@ block content
           span#orderCount 0
   #order-info-container
     mixin barista-view(baristaNumber)
-      div.barista-area(id="barista#{baristaNumber}")
+      div.barista-container(id="barista#{baristaNumber}",data-barista-id="#{baristaNumber}")
         .container
           .row
             .span12

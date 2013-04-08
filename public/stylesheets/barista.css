@@ -34,7 +34,7 @@ html, body {
 	/*background-image: -webkit-linear-gradient(top,#fffeb8,#c49c38);*/
 }
 
-.status-new .mark-as-done {
+.status-assigned .mark-as-done {
 	display: none;
 }
 
