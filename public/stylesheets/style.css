@@ -21,8 +21,12 @@ a {
   line-height: 56px;
 }
 
+.order-row select {
+  margin-top: -6px;
+}
+
 .order-row select.caff-level {
-  width:360px;
+  width:250px;
 }
 
 .order-row select.coffee-type {
