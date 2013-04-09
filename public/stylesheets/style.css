@@ -97,6 +97,10 @@ a {
   left: 5px;
 }
 
+/*report */
+.report-table {
+  font-size: 12px;
+}
 @font-face{
   font-family:'FontAwesome';
   src:url('../font/fontawesome-webfont.eot?v=3.0.1');

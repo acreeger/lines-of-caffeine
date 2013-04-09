@@ -9,9 +9,10 @@ block content
       .span12
         h1 C.O.F.F.E.E
         h2 Overview
+        h4 Total Orders: #{orders.length}
     .row
       .span12
-        table.table
+        table.table.table-bordered.report-table
           thead: tr
             th Name
             th Cell Number
@@ -19,17 +20,36 @@ block content
             th Drink (raw)
             th Date
             th Order Id
-            
-          tbody  
-            each order in orders
-              tr
-                td #{order.customer.firstName} #{order.customer.lastName}
-                td #{order.customer.cellPhone}
-                td #{order.status}
+          mixin orderRow(order)
+            td #{order.customer.firstName} #{order.customer.lastName}
+              td #{order.customer.cellPhone}
+              td #{order.status}
+                if (order.status === "assigned" || order.status === "in-production")
+                  span &nbsp;(#{order.assignee + 1}) 
                 - var drink = order.drinks[0]
                 td #{drink.strength} #{drink.drinkType} #{drink.milk} milk
-                td #{order.date}
-                td #{drink._id}
+              td #{order.date}
+              td #{drink._id}
+          tbody
+            each order in orders
+              case order.status
+                when "complete"
+                  tr.success
+                    mixin orderRow(order)
+                when "aborted"
+                  tr.error
+                    mixin orderRow(order)
+                when "in-production"
+                  tr.warning
+                    mixin orderRow(order)
+                when "assigned"
+                  tr.info
+                    mixin orderRow(order)
+                default: tr
+                    mixin orderRow(order)
+
+
+            
 
 block late-scripts
   //- script(src="/js/ICanHaz.min.js")
