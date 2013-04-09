@@ -50,7 +50,7 @@ html, body {
 	text-align: center;
 }
 
-.mark-as-problem {
+.mark-as-aborted {
 	margin-left: 60px;
 	/*background-image: -webkit-linear-gradient(top,#fffeb8,#c49c38);*/
 }

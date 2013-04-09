@@ -230,8 +230,8 @@ COFFEE.barista = (function($, ich, shared) {
         });
       });
 
-      $(document).on("click", ".mark-as-done", function(){
-        orderStatusButttonHandler(this, function(orderId, $order, response) {
+      var changeStatusAndGetNextOrder = function(button) {
+        orderStatusButttonHandler(button, function(orderId, $order, response) {
           var order = getOrderFromStore(orderId);
           if (!order) {
             console.log("Error: Could not find order %s from local store", orderId);
@@ -255,6 +255,10 @@ COFFEE.barista = (function($, ich, shared) {
             }
           }
         });
+      }
+
+      $(document).on("click", ".mark-as-aborted, .mark-as-done", function() {
+        changeStatusAndGetNextOrder(this)
       });
       //TODO: Get the count of unopened orders
     });

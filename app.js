@@ -61,6 +61,7 @@ app.post('/api/order', routes.drinkOrder.create);
 app.get('/api/order/request', routes.drinkOrder.request);
 app.post('/api/order/:id/start', routes.drinkOrder.start);
 app.post('/api/order/:id/complete', routes.drinkOrder.complete);
+app.post('/api/order/:id/abort', routes.drinkOrder.abort);
 app.post('/api/order/:id/assign/:assignee', routes.drinkOrder.assign);
 app.get('/api/order/count', routes.drinkOrder.count);
 
