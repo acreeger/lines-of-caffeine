@@ -182,6 +182,22 @@ COFFEE.barista = (function($, ich, shared) {
 
       pollingHandler = setTimeout(refreshOrders, 5000);
 
+      var baristaDisabledButtonMap = {}
+
+      $(".barista-container").on("click", ".order-action-buttons button", function(evt) {
+        var baristaId = $(evt.delegateTarget).attr("data-barista-id");
+        // console.log("Disable check: Got baristaId", baristaId);
+        // console.log("baristaDisabledButtonMap[baristaId]:", baristaDisabledButtonMap[baristaId])
+        if (baristaDisabledButtonMap[baristaId]) {
+          // console.log("Button clicks are disabled for barista %s, stopping propagation", baristaId);
+          evt.stopPropagation();
+        } else {
+          // baristaDisabledButtonMap[baristaId] = true;
+          baristaDisabledButtonMap[baristaId] = window.setTimeout(function(){baristaDisabledButtonMap[baristaId] = null},2000)
+          // console.log("Button clicks are not disabled, set baristaDisabledButtonMap[%s] to %d", baristaId, baristaDisabledButtonMap[baristaId]);
+        }
+      });
+
       $(document).on("click", ".mark-as-started", function(){
         orderStatusButttonHandler(this, function(orderId, $order) {
           $order.removeClass("status-assigned").addClass("status-in-production");
