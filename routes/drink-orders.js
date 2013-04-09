@@ -90,6 +90,13 @@ exports.request = function(req, res) {
   }
 }
 
+function validatePhoneNumber(phone_number) {
+  phone_number = phone_number.replace(/\s+/g, "");
+  console.log("phone_number.match",phone_number.match(/^(\+?1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/))
+  return phone_number.length > 9 &&
+    phone_number.match(/^(\+?1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/);
+}
+
 exports.start = function(req, res) {
   var id = req.params.id;
   // console.log("in start with id:",id)
@@ -99,8 +106,12 @@ exports.start = function(req, res) {
     } else if (order) {
       console.log("Updated order",order._id,"to status:",order.status);
       var smsToNumber = order.customer.cellPhone
-      if (smsToNumber && smsToNumber.length == 10) {
-        smsToNumber = "+1" + smsToNumber;
+      if (validatePhoneNumber(smsToNumber)) {
+        var prefix;
+        if (smsToNumber.substring(0,2) == "+1") prefix = ""
+        else if (smsToNumber.substring(0,1) == "1") prefix = "+"
+        else prefix = "+1"
+        smsToNumber = prefix + smsToNumber;
         var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
         var smsMessage = _s.sprintf("Hi %s! Your %s will be ready soon, please come grab it! Lots of love, C.O.F.F.E.E.",
                                       order.customer.firstName

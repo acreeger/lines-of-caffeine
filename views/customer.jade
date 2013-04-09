@@ -8,13 +8,24 @@ block content
         h3.text-left Caffeine Ordering For Fast Employee Enjoyment
     form#order-form.form-inline
       #user-container
+        .row.errorLabelRow
+          .span4
+            label.errorMessage(for="cust-first-name")
+          .span4
+            label.errorMessage(for="cust-last-name")
+          .span4
+            label.errorMessage(for="phone-number")
         .row
-          .span12
-            input#cust-first-name.span4.customer-data(type="text", placeholder="Your first name...", name="customer[firstName]")
-            &nbsp;
-            input#cust-last-name.span4.customer-data(type="text", placeholder="Your last name...", name="customer[lastName]")
-            &nbsp;
-            input#phone-number.span4.customer-data(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
+          .span4
+            input#cust-first-name.required.customer-data(type="text", placeholder="Your first name...", name="customer[firstName]")
+          .span4
+            input#cust-last-name.required.customer-data(type="text", placeholder="Your last name...", name="customer[lastName]")
+          .span4
+            input#phone-number.required.phoneUS.span4.customer-data(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
+        .row
+          .span4.offset8.hidden-phone.input-helper-text
+            em ...we'll text when your drink is ready
+
       #order-success.modal.hide.fade
         .modal-header
           h3 Thank you!
@@ -61,5 +72,5 @@ block content
             button#order-button.btn.btn-primary.btn-large Order
 
 block late-scripts
+  script(src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js")
   script(src="js/customer.js")
-      
