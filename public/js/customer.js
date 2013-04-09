@@ -40,7 +40,7 @@ COFFEE.customer = (function($) {
               $("#order-success").modal('hide')
             }, 10000);
           })
-          .modal({backdrop:'static'})
+          .modal()
           .one("hide",function() {
             window.clearTimeout(timeoutHandler);
             $button.prop("disabled", false);
