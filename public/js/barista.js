@@ -162,12 +162,37 @@ COFFEE.barista = (function($, ich, shared) {
     });
   }
 
+  function getNewOrderCount(cb) {
+    $.get("/api/order/count",{status:"new"}, function(response) {
+      cb(response);
+    }).fail(function(jqXHR,textStatus, errorThrown) {
+      if ($.type(cb) === "function") {
+        cb({success:false, data: {errorThrown: errorThrown}});
+      }
+    });
+  }
+
+  function updateOrderCountFromServerResponse(response) {
+    if (response && response.success) {
+      var count = response.data.count;
+      if ($.type(count) == "number"){
+        $("#orderCount").text(count);
+      } else {
+        console.log("Warning: Not updating order count. %s is not a valid order count")
+      }
+    } else {
+      console.log("Error: updateOrderCountFromServerResponse failed with response:", response);
+    }
+  }
+
   function refreshOrders() {
-    // console.log("refreshOrders...")
     if (unassignedBaristasCount > 0){
       // console.log("refreshOrders: unassignedBaristasCount is non-zero:",unassignedBaristasCount)
       //I wonder if there is a race condition here. What happens if this fires at the same time as "done" action
       getMoreOrders(unassignedBaristasCount, true);
+    } else {
+      //let's update the count.
+      getNewOrderCount(updateOrderCountFromServerResponse);
     }
     pollingHandler = setTimeout(refreshOrders, 5000);
   }
@@ -181,6 +206,7 @@ COFFEE.barista = (function($, ich, shared) {
       getMoreOrders(numBaristas);
 
       pollingHandler = setTimeout(refreshOrders, 5000);
+      getNewOrderCount(updateOrderCountFromServerResponse);
 
       var baristaDisabledButtonMap = {}
 
