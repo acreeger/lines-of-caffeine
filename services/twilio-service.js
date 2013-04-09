@@ -1,17 +1,28 @@
-
-
 var getenv = require('getenv')
     , TWILIO_SID = getenv("TWILIO_SID", null)
     , TWILIO_AUTH_TOKEN = getenv("TWILIO_AUTH_TOKEN", null)
     , TWILIO_FROM_NUMBER = getenv("TWILIO_FROM_NUMBER", null)
     , TWILIO_ENABLED = getenv.bool("TWILIO_ENABLED", false)
+
+
     
 if (TWILIO_ENABLED && (!TWILIO_SID || !TWILIO_AUTH_TOKEN || !TWILIO_FROM_NUMBER)) {
     throw new Error("Please make sure TWILIO_SID, TWILIO_AUTH_TOKEN and TWILIO_FROM_NUMBER are specified in environment variables");
 }
 
-if (TWILIO_ENABLED) console.log("Twilio enabled from %s.", TWILIO_FROM_NUMBER)
-else console.log("Twilio not enabled.");
+var twilioEnabled;
+
+if (TWILIO_ENABLED) {
+  console.log("Twilio enabled from %s.", TWILIO_FROM_NUMBER)
+  twilioEnabled = true;
+} else {
+  console.log("Twilio not enabled.");
+  twilioEnabled = false;
+}
+
+exports.twilioEnabled = function() {
+  return twilioEnabled;
+}
 
 exports.sendSMS = function(message, smsNumber, cb) {
     if (!cb || typeof cb !== "function") cb = function(){};

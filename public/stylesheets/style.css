@@ -89,6 +89,14 @@ a {
 	right: 0;
 }
 
+.sms-disabled-warning {
+  color: red;
+  font-weight: bold;
+  position: absolute;
+  bottom: 0;
+  left: 5px;
+}
+
 @font-face{
   font-family:'FontAwesome';
   src:url('../font/fontawesome-webfont.eot?v=3.0.1');

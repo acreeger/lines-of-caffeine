@@ -1,6 +1,8 @@
 extends layout
 
 block content
+  if (!twilioEnabled)
+    p.sms-disabled-warning Text messaging functionality has been disabled.
   .container
     .row
       .span12
