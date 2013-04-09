@@ -26,7 +26,7 @@ block content
             input#phone-number.required.phoneUS.span4.customer-data(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
         .row
           .span4.offset8.hidden-phone.input-helper-text
-            em ...we'll text when your drink is ready
+            em ...we'll text you when your drink is ready
 
       #order-success.modal.hide.fade
         .modal-header
@@ -38,11 +38,11 @@ block content
       #order-container
         .row.order-row
           .span12
-            p I would like a&nbsp;
+            p
               select.caff-level.input-large(name="drinks[0][strength]")
-                option(value="full") full strength
-                option(value="decaf") decaffeinated
-                option(value="half-caff") half caff
+                option(value="full") Full strength
+                option(value="decaf") Decaffeinated
+                option(value="half-caff") Half caff
               | &nbsp;&nbsp;
               select.coffee-type.input-extra-large(name="drinks[0][drinkType]")
                 option(value="americano") Cafè Americano
@@ -51,24 +51,25 @@ block content
                 option(value="cappuccino") Cappuccino
                 option(value="dry-cappuccino") dry Cappuccino
                 option.caffeine-only(value="chai") Chai Latte
-                option(value="single-espresso") single Espresso shot
-                option(value="double-espresso") double Espresso shot
+                option.no-milk(value="single-espresso") single Espresso shot
+                option.no-milk(value="double-espresso") double Espresso shot
                 option(value="macchiato") Macchiato
-              //- | &nbsp;with&nbsp;
-              //- select.milk-type.input-medium(name="drinks[0][milk]")
-              //-   option(value="full-fat") full fat
-              //-   option(value="skim") skim
-              //-   option(value="none") no
-              //- | &nbsp;milk, please.
-        .row.order-row
-          .span12
-            p with&nbsp;
+              | &nbsp;with&nbsp;
               select.milk-type.input-medium(name="drinks[0][milk]")
                 option(value="full-fat") full fat
                 option(value="skim") skim
                 option(value="soy") soy
                 option(value="none") no
               | &nbsp;milk, please.
+        //- .row.order-row
+        //-   .span12
+        //-     p with&nbsp;
+        //-       select.milk-type.input-medium(name="drinks[0][milk]")
+        //-         option(value="full-fat") full fat
+        //-         option(value="skim") skim
+        //-         option(value="soy") soy
+        //-         option(value="none") no
+        //-       | &nbsp;milk, please.
         .row
           .span1
             button#order-button.btn.btn-primary.btn-large Order

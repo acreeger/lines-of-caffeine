@@ -55,6 +55,7 @@ COFFEE.customer = (function($) {
       }
     });
     var $strengthSelect = $(".caff-level");
+    var $milkSelect = $(".milk-type");
 
     $(".coffee-type").change(function () {
       var $this = $(this);
@@ -65,6 +66,11 @@ COFFEE.customer = (function($) {
       }
       $strengthSelect.prop("disabled", caffeineOnly);
       $strengthSelect.fadeTo(200, opacity);
+
+      var noMilk = $this.find("option").filter(":selected").hasClass("no-milk");
+      if (noMilk) {
+        $milkSelect.val("none")
+      }
     });
   });
 
