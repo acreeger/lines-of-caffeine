@@ -76,7 +76,6 @@ exports.request = function(req, res) {
           ordersRequired -= orders.length
           if (ordersRequired > 0) {
             getNewOrders(ordersRequired, function(err, newOrders) {
-              console.log("in newOrders handler")
               orders = orders.concat(newOrders);
               returnResults(err, orders);
             });

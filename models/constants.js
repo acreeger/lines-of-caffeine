@@ -9,12 +9,14 @@ exports.order = {
 // TODO: Use this to list the drink types
 exports.drinkTypes = {
   "americano": "Americano"
-  , "latte": "Caffè latte"
-  , "mocha": "Caffè mocha"
+  , "latte": "Cafè latte"
+  , "mocha": "Cafè mocha"
   , "cappuccino": "Cappuccino"
   , "chai": "Chai latte"
-  , "espresso": "Espresso"
+  , "single-espresso": "single Espresso shot"
+  , "double-espresso": "double Espresso shot"
   , "dry-cappuccino": "dry Cappuccino"
+  , "macchiato": "Macchiato"
 };
 
 exports.strengthTypes = {
@@ -26,5 +28,6 @@ exports.strengthTypes = {
 exports.milkTypes = {
   "full-fat": "full fat"
   , "skim": "skim"
+  , "soy" : "soy"
   , "none": "no"
 };

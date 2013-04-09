@@ -6,12 +6,41 @@ body {
 a {
   color: #00B7FF;
 }
+#user-container input {
+  font-size: 30px;
+  height: 40px;
+}
+
+#user-container input::-webkit-input-placeholder {
+  padding-top: 10px;
+}
 
 .order-row, .order-row select {
-	font-size: 20px;
+	font-size: 36px;
+  height: 60px;
+  line-height: 60px;
 }
-#order-container, #user-container {
-	margin-top: 20px;
+
+.order-row select.caff-level {
+  width:360px;
+}
+
+.order-row select.coffee-type {
+  width:400px;
+}
+
+#order-button {
+  margin-top: 20px;
+  padding: 30px 30px;
+  font-size: 50.5px;
+}
+
+#order-container {
+	margin-top: 40px;
+}
+
+#user-container {
+  margin-top: 20px;
 }
 
 #logo {
