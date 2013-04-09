@@ -11,10 +11,10 @@ jQuery.validator.addMethod("phoneUS", function(phone_number, element) {
 var COFFEE = COFFEE || {};
 
 COFFEE.customer = (function($) {
-
+  var formValidator;
   $(function() {
     var $orderForm = $("#order-form")
-    $orderForm.validate({
+    formValidator = $orderForm.validate({
       errorClass: "errorMessage",
       messages: {
         "customer[firstName]" :{"required" : "What will we call you?"},
@@ -33,9 +33,18 @@ COFFEE.customer = (function($) {
         $disabledElems.prop("disabled", true);
         var jqxhr = $.post('/api/order',serializedForm).done(function(data) {
           console.log("Success! Got data", data);
-          $("#order-success").modal().one("hide",function() {
-            $(".customer-data").val('');
-            $(".order-row select option").filter(":selected").prop("selected", false);
+          var timeoutHandler
+          $("#order-success").one("show", function() {
+            timeoutHandler = window.setTimeout(function() {
+              $("#order-success").modal('hide')
+            }, 10000);
+          })
+          .modal('show')
+          .one("hide",function() {
+            window.clearTimeout(timeoutHandler);
+            $(".valid").removeClass("valid");
+            formValidator.resetForm();
+            $("#order-form").get(0).reset();
             $disabledElems.prop("disabled",false).fadeTo(100,1.0);
           });
           //IDEA: Inlcude chance to edit phone number in modal?
