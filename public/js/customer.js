@@ -20,7 +20,7 @@ COFFEE.customer = (function($) {
         "customer[firstName]" :{"required" : "What will we call you?"},
         "customer[lastName]": {"required" : "Type at least the first letter"},
         "customer[cellPhone]": {
-          "required" : "Type your digits please",
+          "required" : "Add your digits please",
           "phoneUS" : "Make sure you get this right"
         }
       }

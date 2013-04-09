@@ -9,10 +9,10 @@ exports.order = {
 // TODO: Use this to list the drink types
 exports.drinkTypes = {
   "americano": "Cafè Americano"
-  , "latte": "Cafè latte"
-  , "mocha": "Cafè mocha"
+  , "latte": "Cafè Latte"
+  , "mocha": "Cafè Mocha"
   , "cappuccino": "Cappuccino"
-  , "chai": "Chai latte"
+  , "chai": "Chai Latte"
   , "single-espresso": "single Espresso shot"
   , "double-espresso": "double Espresso shot"
   , "dry-cappuccino": "dry Cappuccino"
