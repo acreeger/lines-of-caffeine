@@ -54,8 +54,8 @@ app.configure(function(){
 });
 
 app.get('/', routes.customer);
-
 app.get('/barista/:numberOfBaristas?',routes.barista);
+app.get('/report', routes.report);
 
 app.post('/api/order', routes.drinkOrder.create);
 app.get('/api/order/request', routes.drinkOrder.request);

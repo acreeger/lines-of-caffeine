@@ -1,0 +1,39 @@
+extends layout
+
+block head
+  meta(http-equiv="refresh",content="5")
+  //- link(rel="stylesheet", media='screen', href='/stylesheets/report.css')
+
+block content
+  .container
+    .row
+      .span12
+        h1 C.O.F.F.E.E
+        h2 Overview
+    .row
+      .span12
+        table.table
+          thead: tr
+            th Name
+            th Cell Number
+            th Status
+            th Drink (raw)
+            th Date
+            th Order Id
+            
+          tbody  
+            each order in orders
+              tr
+                td #{order.customer.firstName} #{order.customer.lastName}
+                td #{order.customer.cellPhone}
+                td #{order.status}
+                - var drink = order.drinks[0]
+                td #{drink.strength} #{drink.drinkType} #{drink.milk} milk
+                td #{order.date}
+                td #{drink._id}
+
+block late-scripts
+  //- script(src="/js/ICanHaz.min.js")
+  //- script(src="/js/barista.js")
+  //- script
+  //-   COFFEE.barista.init(#{numberOfBaristas});
