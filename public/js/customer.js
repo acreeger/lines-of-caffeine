@@ -5,31 +5,43 @@ j.replace(a,""),b=h.build([],h.push_counter(j),b)):n.test(a)?b=h.build([],a,b):p
 jQuery.validator.addMethod("phoneUS", function(phone_number, element) {
     phone_number = phone_number.replace(/\s+/g, ""); 
   return this.optional(element) || phone_number.length > 9 &&
-    phone_number.match(/^(1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/);
-}, "Please specify a valid phone number");
+    phone_number.match(/^(\+?1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/);
+},"Please enter a valid US phone number");
 
 var COFFEE = COFFEE || {};
 
 COFFEE.customer = (function($) {
 
   $(function() {
-    $("#order-form").validate();
-    $("#cust-first-name").focus();
+    var $orderForm = $("#order-form")
+    $orderForm.validate({
+      errorClass: "errorMessage",
+      messages: {
+        "customer[firstName]" :{"required" : "What will we call you?"},
+        "customer[lastName]": {"required" : "Type at least the first letter"},
+        "customer[cellPhone]": {
+          "required" : "Type your digits please",
+          "phoneUS" : "Make sure you get this right"
+        }
+      }
+    });
     $("#order-button").click(function(evt) {
       evt.preventDefault();
-      var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
-      var serializedForm = $('#order-form').serializeObject();
-      $disabledElems.prop("disabled", true);
-      var jqxhr = $.post('/api/order',serializedForm).done(function(data) {
-        console.log("Success! Got data", data);
-        $("#order-success").modal().one("hide",function() {
-          $(".customer-data").val('');
-          $(".order-row select option").filter(":selected").prop("selected", false);
-          $disabledElems.prop("disabled",false).fadeTo(100,1.0);
-        });
-        //IDEA: Inlcude chance to edit phone number in modal?
-      })
-      .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened", errorThrown)});        
+      if ($orderForm.valid()) {
+        var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
+        var serializedForm = $('#order-form').serializeObject();
+        $disabledElems.prop("disabled", true);
+        var jqxhr = $.post('/api/order',serializedForm).done(function(data) {
+          console.log("Success! Got data", data);
+          $("#order-success").modal().one("hide",function() {
+            $(".customer-data").val('');
+            $(".order-row select option").filter(":selected").prop("selected", false);
+            $disabledElems.prop("disabled",false).fadeTo(100,1.0);
+          });
+          //IDEA: Inlcude chance to edit phone number in modal?
+        })
+        .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened", errorThrown)});
+      }
     });
     var $strengthSelect = $(".caff-level");
 

@@ -9,10 +9,46 @@ a {
 #user-container input {
   font-size: 30px;
   height: 40px;
+  width: 100%;
 }
 
 #user-container input::-webkit-input-placeholder {
   padding-top: 10px;
+}
+
+#user-container input.errorMessage {
+  border-color: #b94a48;
+/*  -webkit-box-shadow: 7px 7px 5px rgba(185, 74, 72, 0.75);
+  -moz-box-shadow:    7px 7px 5px rgba(185, 74, 72, 0.75);
+  box-shadow:         7px 7px 5px rgba(185, 74, 72, 0.75);*/
+  /*margin-top: 20px;*/
+}
+
+#user-container input.errorMessage:focus {
+  border-color: #953b39;
+  box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(185, 74, 72, 0.6) 0px 0px 8px 0px;
+}
+
+#user-container input.valid {
+  border-color: #468847;
+}
+
+#user-container input.valid:focus {
+  border-color: #356635;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
+}
+
+
+.errorLabelRow {
+  min-height: 25px;
+  color: #b94a48;
+}
+
+.input-helper-text {
+  text-align: right;
+  color:#aaa;
 }
 
 .order-row, .order-row select {
@@ -45,10 +81,6 @@ a {
 
 #order-container {
 	margin-top: 40px;
-}
-
-#user-container {
-  margin-top: 20px;
 }
 
 #logo {
