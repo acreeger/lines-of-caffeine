@@ -28,6 +28,7 @@ COFFEE.customer = (function($) {
     $("#order-button").click(function(evt) {
       evt.preventDefault();
       if ($orderForm.valid()) {
+        $button = $(this).prop("disabled", true);
         var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
         var serializedForm = $('#order-form').serializeObject();
         $disabledElems.prop("disabled", true);
@@ -39,9 +40,10 @@ COFFEE.customer = (function($) {
               $("#order-success").modal('hide')
             }, 10000);
           })
-          .modal('show')
+          .modal({backdrop:'static'})
           .one("hide",function() {
             window.clearTimeout(timeoutHandler);
+            $button.prop("disabled", false);
             $(".valid").removeClass("valid");
             formValidator.resetForm();
             $("#order-form").get(0).reset();
