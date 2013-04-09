@@ -20,7 +20,7 @@ block content
         <button data-action-type="abort" class="mark-as-problem btn btn-warning btn-large"><i class="icon-exclamation-sign icon-large"></i>&nbsp;Problem!</button>
       </div>
     </div>
-  .container
+  .container.xrow
     .row
       .span6
         h1.text-left C.O.F.F.E.E
@@ -30,9 +30,9 @@ block content
       .span12 Number of orders:&nbsp;&nbsp;
         strong
           span#orderCount
-  #order-info-container
+  #order-info-container.scroll-y.content.xrow
     mixin barista-view(baristaNumber)
-      div.barista-container(id="barista#{baristaNumber}",data-barista-id="#{baristaNumber}")
+      div(class="barista-container barista-count-#{numberOfBaristas}",id="barista#{baristaNumber}",data-barista-id="#{baristaNumber}")
         .container
           .row
             .span12

@@ -1,22 +1,39 @@
 html, body {
 	background-color: #333;
 	color:white;
-	height: auto;
+	height: 100%;
 	min-height: 100%;
 }
 
 #order-info-container {
-	height: 100%;
-	/*border: 1px solid silver;*/
+	padding-bottom: 20px;
 }
 
 .barista-title {
 	color:#ccc;
 }
 
-.barista-container {
-	
+.barista-count-2 {
+	height: 50%
 }
+
+.barista-count-3 {
+	height: 33%
+}
+
+.barista-count-4 {
+	height: 25%
+}
+
+.barista-container {
+	border-top: 1px solid silver;
+	margin-top: -1px;
+}
+
+.barista-container:first-child {
+	border-top: none;
+}
+
 /*.coffee-strength {
 	padding-right: 5px;
 }
@@ -45,3 +62,15 @@ html, body {
 .status-in-production .mark-as-started {
 	display: none;
 }
+
+.status-in-production {
+	/*color:#006dcc;*/
+}
+
+.xrow, .xcol { overflow: hidden; position: absolute; }
+.xrow { left: 0; right: 0; }
+.xcol { top: 0; bottom: 0; }
+.scroll-x { overflow-x: auto; }
+.scroll-y { overflow-y: auto; }
+.header.xrow { height: 77px; top: 0; }
+.content.xrow { top: 77px; bottom: 0; }
