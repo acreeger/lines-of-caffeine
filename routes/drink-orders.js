@@ -117,7 +117,7 @@ exports.start = function(req, res) {
       if (validatePhoneNumber(smsToNumber)) {
         smsToNumber = addPrefixToPhoneNumber(smsToNumber)
         var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-        var smsMessage = _s.sprintf("Hi %s! Your %s will be ready soon, please come grab it! Lots of love, C.O.F.F.E.E.",
+        var smsMessage = _s.sprintf("Hi %s! Your %s will be ready soon, please come grab it before it gets cold! Love, the folks from Culture and Wellness.",
                                       order.customer.firstName
                                     , drinkType
                                     );
@@ -188,7 +188,7 @@ exports.abort = function(req, res) {
       if (validatePhoneNumber(smsToNumber)) {
         smsToNumber = addPrefixToPhoneNumber(smsToNumber)
         var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-        var smsMessage = _s.sprintf("Hi %s! Unfortunately there was a problem with your order. Please come see us to sort it out. Sorry about that, C.O.F.F.E.E.",
+        var smsMessage = _s.sprintf("Hi %s! Unfortunately there was a problem with your drink order. Please come see us to sort it out. Sorry about that!",
                                       order.customer.firstName
                                     );
         twilioService.sendSMS(smsMessage, smsToNumber);
