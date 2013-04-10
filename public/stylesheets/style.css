@@ -1,5 +1,5 @@
 body {
-  /*padding: 50px;*/
+  padding-top: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -65,10 +65,16 @@ a {
 #order-container select {
   width: 100%
 }
+
 #order-button {
-  margin-top: 120px;
+  margin-top: 60px;
   padding: 30px 30px;
   font-size: 50.5px;
+  background-image: -webkit-linear-gradient(rgb(11, 166, 187), #006AD8)
+}
+
+#order-button:hover {
+  background-color: #006AD8;
 }
 
 #order-container {
@@ -96,20 +102,29 @@ a {
   text-align: right;
 }
 
-#order-button {
-  background-image: -webkit-linear-gradient(rgb(11, 166, 187), #006AD8)
-}
-
-#order-button:hover {
-  background-color: #006AD8;
-  /*background-color: #fff;*/
-}
 .sms-disabled-warning {
   color: red;
   font-weight: bold;
   position: absolute;
   bottom: 0;
   left: 5px;
+}
+
+.hide {
+  display: none;
+}
+
+#special-instructions textarea {
+  width: 450px;
+  height: 200px;
+}
+
+#special-instructions .modal-body {
+  text-align: center
+}
+
+#add-special-instructions {
+  margin-top:55px;
 }
 
 /*report */

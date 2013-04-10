@@ -35,6 +35,14 @@ block content
           p We will text you when it's time to come grab your drink.
         .modal-footer
           button.btn.btn-primary.btn-large(data-dismiss='modal', aria-hidden='true') Close
+      #special-instructions.modal.hide.fade
+        .modal-header
+          h3 Add special instructions here...
+          .modal-body
+            textarea(name="drinks[0][specialInstructions]")
+          .modal-footer
+            button.btn.btn-primary.btn(data-dismiss='modal', aria-hidden='true') Close
+
       #order-container
         .row
           .span12.input-helper-text.align-left
@@ -71,6 +79,9 @@ block content
         //-         option(value="soy") soy
         //-         option(value="none") no
         //-       | &nbsp;milk, please.
+        .row
+          .span12.align-center
+            button#add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Add special instructions
         .row
           .span12.align-center
             button#order-button.btn.btn-primary.btn-large Order

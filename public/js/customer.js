@@ -25,6 +25,11 @@ COFFEE.customer = (function($) {
         }
       }
     });
+
+    $("#special-instructions").on("shown", function() {
+      $("#special-instructions textarea").focus();
+    });
+
     $("#order-button").click(function(evt) {
       evt.preventDefault();
       if ($orderForm.valid()) {
