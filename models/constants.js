@@ -27,7 +27,7 @@ exports.strengthTypes = {
 
 exports.milkTypes = {
   "full-fat": "full fat"
-  , "skim": "skim"
+  , "skim": "non-fat"
   , "soy" : "soy"
   , "none": "no"
 };
