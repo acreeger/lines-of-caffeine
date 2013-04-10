@@ -83,12 +83,28 @@ a {
 	margin-top: 40px;
 }
 
-#logo {
-	position: absolute;
-	bottom: 0;
-	right: 0;
+.logo-row {
+  text-align: center;
 }
 
+.logo-row img {
+  width: 450px;
+  margin-left: 60px;
+}
+
+.align-center {
+  text-align: center;;
+}
+
+/*00B4EF*/
+#order-button {
+  background-image: linear-gradient(to bottom,rgb(0, 210, 239),#006AD8);
+}
+
+#order-button:hover {
+  background-color: #006AD8;
+  /*background-color: #fff;*/
+}
 .sms-disabled-warning {
   color: red;
   font-weight: bold;

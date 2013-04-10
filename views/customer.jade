@@ -5,9 +5,9 @@ block content
     p.sms-disabled-warning Text messaging functionality has been disabled.
   .container
     .row
-      .span12
-        h1.text-left C.O.F.F.E.E
-        h3.text-left Caffeine Ordering For Fast Employee Enjoyment
+      .span12.logo-row
+        h1: img(src="images/AKQA_BLUEBOTTLE_logo.jpg",title="AKQA & Blue Bottle Coffee")
+        //- h3.text-left Caffeine Ordering For Fast Employee Enjoyment
     form#order-form.form-inline
       #user-container
         .row.errorLabelRow
@@ -71,7 +71,7 @@ block content
         //-         option(value="none") no
         //-       | &nbsp;milk, please.
         .row
-          .span1
+          .span12.align-center
             button#order-button.btn.btn-primary.btn-large Order
 
 block late-scripts
