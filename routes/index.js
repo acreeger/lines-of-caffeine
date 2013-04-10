@@ -26,9 +26,14 @@ exports.report = function(req, res) {
 	if(key !== password) {
 		res.send(403);
 	} else {
+		var criteria = {}
 		var limit = req.query["limit"] || 200;
 		var sort = req.query["sort"] || "-date";
-	  DrinkOrder.find({}).limit(limit).sort(sort).exec(function (err, orders) {
+		var status = req.query["status"];
+		if (status) {
+			criteria["status"] = status
+		}
+	  DrinkOrder.find(criteria).limit(limit).sort(sort).exec(function (err, orders) {
 	  	res.render('report', {title: 'Lines of Caffeine - Order Report', orders: orders})
 	  });
 	}
