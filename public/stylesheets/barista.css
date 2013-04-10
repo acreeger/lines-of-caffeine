@@ -46,6 +46,10 @@ html, body {
 	font-size: 28px;
 }
 
+.specialInstructions {
+	font-size: 14px;
+}
+
 .order-action-buttons {
 	text-align: center;
 }

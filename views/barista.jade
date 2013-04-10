@@ -6,18 +6,23 @@ block head
 block content
   script#orderTemplate(type="text/html").
     <div id="order-{{id}}" data-order-id="{{id}}" class="order status-{{status}}">
-      <p class="span6 drink">
-        <strong class="coffee-strength">{{strength}}</strong>
-        <strong class="coffee-type">{{drinkType}}</strong>
-        <br>with
-        <strong>{{milk}}</strong>
-        milk for
-        <strong>{{name}}</strong>
-      </p>
+      <div class="span6 drink">
+        <p>
+          <strong class="coffee-strength">{{strength}}</strong>
+          <strong class="coffee-type">{{drinkType}}</strong>
+          <br>with
+          <strong>{{milk}}</strong>
+          milk for
+          <strong>{{name}}</strong>
+        </p>
+        {{#specialInstructions}}
+        <p class="specialInstructions"><em>{{specialInstructions}}</em></p>
+        {{/specialInstructions}}
+      </div>
       <div class="span6 order-action-buttons">
         <button data-action-type="complete" class="mark-as-done btn btn-success btn-large"><i class="icon-ok-sign icon-large"></i>&nbsp;Done!</button>
         <button data-action-type="start" class="mark-as-started btn btn-primary btn-large"><i class="icon-play icon-large"></i>&nbsp;Start!</button>
-        <button data-action-type="abort" class="mark-as-aborted btn btn-warning btn-large"><i class="icon-exclamation-sign icon-large"></i>&nbsp;Problem!</button>
+        <button data-action-type="abort" class="mark-as-aborted btn btn-warning btn-large"><i class="icon-exclamation-sign icon-large"></i>&nbsp;Cancel!</button>
       </div>
     </div>
   .container.xrow

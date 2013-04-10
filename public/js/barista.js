@@ -61,6 +61,7 @@ COFFEE.barista = (function($, ich, shared) {
           milk: shared.MILK_TYPES[drink.milk] || drink.milk,
           name: order.customer.firstName + " " + order.customer.lastName.substring(0,1),
           status: order.status,
+          specialInstructions: drink.specialInstructions,
           id: order._id
         }
         var $order = ich.orderTemplate(orderForTemplate);

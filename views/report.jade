@@ -28,6 +28,12 @@ block content
                   span &nbsp;(#{order.assignee + 1}) 
                 - var drink = order.drinks[0]
                 td #{drink.strength} #{drink.drinkType} #{drink.milk} milk
+                  - var shortInstructions = drink.specialInstructions
+                  - var limit = 30
+                  if drink.specialInstructions
+                    - if (drink.specialInstructions.length > limit) shortInstructions = drink.specialInstructions.substring(0,limit - 3) + '...'                 
+                    br
+                    span(title="#{drink.specialInstructions}"): em #{shortInstructions}
               td #{order.date}
               td #{drink._id}
           tbody
