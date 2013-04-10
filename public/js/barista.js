@@ -220,7 +220,7 @@ COFFEE.barista = (function($, ich, shared) {
           evt.stopPropagation();
         } else {
           // baristaDisabledButtonMap[baristaId] = true;
-          baristaDisabledButtonMap[baristaId] = window.setTimeout(function(){baristaDisabledButtonMap[baristaId] = null},2000)
+          baristaDisabledButtonMap[baristaId] = window.setTimeout(function(){baristaDisabledButtonMap[baristaId] = null},1000)
           // console.log("Button clicks are not disabled, set baristaDisabledButtonMap[%s] to %d", baristaId, baristaDisabledButtonMap[baristaId]);
         }
       });

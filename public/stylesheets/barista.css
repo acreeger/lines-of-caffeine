@@ -43,7 +43,7 @@ html, body {
 }
 
 .order {
-	font-size: 24px;
+	font-size: 36px;
 }
 
 .no-orders h4 {
@@ -56,6 +56,11 @@ html, body {
 
 .order-action-buttons {
 	text-align: center;
+}
+
+.order-action-buttons button {
+	height: 60px;
+	font-size: 24px;
 }
 
 .mark-as-aborted {
