@@ -1,8 +1,11 @@
 extends layout
+block head
+  link(rel='stylesheet', media='screen', href='/stylesheets/customer.css')
 
 block content
   if (!twilioEnabled)
     p.sms-disabled-warning Text messaging functionality has been disabled.
+  button#top-right-reset-button.btn.btn-link.reset-button.pull-right Reset
   .container
     .row
       .span12.logo-row
@@ -25,7 +28,7 @@ block content
           .span4
             input#phone-number.required.phoneUS.span4.customer-data(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
         .row
-          .span4.offset8.hidden-phone.input-helper-text
+          .span4.offset8.hidden-phone.input-helper-text.align-right
             em ...we'll text you when your drink is ready
 
       #order-success.modal.hide.fade
@@ -37,11 +40,13 @@ block content
           button.btn.btn-primary.btn-large(data-dismiss='modal', aria-hidden='true') Close
       #special-instructions.modal.hide.fade
         .modal-header
-          h3 Add special instructions here...
-          .modal-body
-            textarea(name="drinks[0][specialInstructions]")
-          .modal-footer
-            button.btn.btn-primary.btn(data-dismiss='modal', aria-hidden='true') Close
+          h4 Add special requests here...
+        .modal-body
+          textarea(name="drinks[0][specialInstructions]",maxlength="380")
+        .modal-footer
+          button.clear-special-instructions.btn.btn-link.pull-left Clear
+          button.btn.btn-primary.btn(data-dismiss='modal', aria-hidden='true') Close
+          //- TODO: Add clear link
 
       #order-container
         .row
@@ -81,7 +86,8 @@ block content
         //-       | &nbsp;milk, please.
         .row
           .span12.align-center
-            button#add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Add special instructions
+            button#no-special-requests.add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Any special requests?
+            button#entered-special-requests.hide.add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Edit special requests
         .row
           .span12.align-center
             button#order-button.btn.btn-primary.btn-large Order

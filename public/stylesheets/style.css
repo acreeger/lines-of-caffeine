@@ -1,5 +1,4 @@
 body {
-  padding-top: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
@@ -112,19 +111,6 @@ a {
 
 .hide {
   display: none;
-}
-
-#special-instructions textarea {
-  width: 450px;
-  height: 200px;
-}
-
-#special-instructions .modal-body {
-  text-align: center
-}
-
-#add-special-instructions {
-  margin-top:55px;
 }
 
 /*report */

@@ -2,6 +2,9 @@
 (function(f){return f.fn.serializeObject=function(){var k,l,m,n,p,g,c,h=this;g={};c={};k=/^[a-zA-Z][a-zA-Z0-9_]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/;l=/[a-zA-Z0-9_]+|(?=\[\])/g;m=/^$/;n=/^\d+$/;p=/^[a-zA-Z0-9_]+$/;this.build=function(d,e,a){d[e]=a;return d};this.push_counter=function(d){void 0===c[d]&&(c[d]=0);return c[d]++};f.each(f(this).serializeArray(),function(d,e){var a,c,b,j;if(k.test(e.name)){c=e.name.match(l);b=e.value;for(j=e.name;void 0!==(a=c.pop());)m.test(a)?(a=RegExp("\\["+a+"\\]$"),j=
 j.replace(a,""),b=h.build([],h.push_counter(j),b)):n.test(a)?b=h.build([],a,b):p.test(a)&&(b=h.build({},a,b));return g=f.extend(!0,g,b)}});return g}})(jQuery);
 
+//charCount
+(function(e){e.fn.charCount=function(t){function r(n){var r=e(n).val().length;var i=t.allowed-r;if(i<=t.warning&&i>=0){e(n).next().addClass(t.cssWarning)}else{e(n).next().removeClass(t.cssWarning)}if(i<0){e(n).next().addClass(t.cssExceeded)}else{e(n).next().removeClass(t.cssExceeded)}e(n).next().html(t.counterText+i)}var n={allowed:140,warning:25,css:"counter",counterElement:"span",cssWarning:"warning",cssExceeded:"exceeded",counterText:""};var t=e.extend(n,t);this.each(function(){e(this).after("<"+t.counterElement+' class="'+t.css+'">'+t.counterText+"</"+t.counterElement+">");r(this);e(this).keyup(function(){r(this)});e(this).change(function(){r(this)})})}})(jQuery)
+
 jQuery.validator.addMethod("phoneUS", function(phone_number, element) {
     phone_number = phone_number.replace(/\s+/g, ""); 
   return this.optional(element) || phone_number.length > 9 &&
@@ -12,7 +15,36 @@ var COFFEE = COFFEE || {};
 
 COFFEE.customer = (function($) {
   var formValidator;
+  var idleTimeMins = 0;
+
+  function resetForm() {
+    formValidator.resetForm();
+    $("#order-form").get(0).reset();
+    $(".modal").modal("hide");
+    $(".valid").removeClass("valid");
+    $("input.errorMessage").removeClass("errorMessage");
+    $(".order-row select").filter(":disabled").prop("disabled",false).fadeTo(100,1.0);
+    $("#special-instructions textarea").change();
+  }
+
   $(function() {
+
+    var idleInterval = setInterval(function() {
+      idleTimeMins++;
+      console.log("Incrementing idleTimeMins to", idleTimeMins);
+      if (idleTimeMins > 1) { // Actually 2 mins
+          idleTimeMins = 0;
+          console.log("Resetting form due to inactivity");
+          resetForm();
+      }
+    }, 60000);
+
+    $(document).on("mousemove click keypress" ,function() {
+      idleTimeMins = 0;
+    });
+
+    $(".reset-button").on("click", resetForm)
+
     var $orderForm = $("#order-form")
     formValidator = $orderForm.validate({
       errorClass: "errorMessage",
@@ -21,14 +53,33 @@ COFFEE.customer = (function($) {
         "customer[lastName]": {"required" : "Type at least the first letter"},
         "customer[cellPhone]": {
           "required" : "Add your digits please",
-          "phoneUS" : "Make sure you get this right"
+          "phoneUS" : "This doesn't look right"
         }
       }
     });
 
     $("#special-instructions").on("shown", function() {
       $("#special-instructions textarea").focus();
+    }).find("textarea").on("change", function() {
+      if ($.trim($(this).val()) !== "") {
+        $("#no-special-requests").hide();
+        $("#entered-special-requests").show();
+      } else {
+        $("#no-special-requests").show();
+        $("#entered-special-requests").hide();
+      }
+    }).charCount({
+      allowed: 380,
+      warning: 20,
+      counterText: 'Characters left: ',
+      cssWarning: 'text-warning',
+      cssExceeded: 'text-error',
+      counterElement: 'div'
     });
+
+    $(".clear-special-instructions").on("click", function() {
+      $("#special-instructions textarea").val("").change();
+    })
 
     $("#order-button").click(function(evt) {
       evt.preventDefault();

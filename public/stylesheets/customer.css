@@ -1,0 +1,36 @@
+body {
+	padding-top: 50px;
+}
+
+.counter {
+	text-align: right;
+	padding-right: 31px;
+	color:#ccc;
+	padding-top: 5px;
+}
+
+.counter.text-warning {
+	color: #c09853;
+}
+
+.counter.text-error {
+	color:#b94a48;
+}
+
+#special-instructions textarea {
+  width: 450px;
+  height: 180px;
+}
+
+#special-instructions .modal-body {
+  text-align: center
+}
+
+.add-special-instructions {
+  margin-top:55px;
+}
+
+#top-right-reset-button {
+	margin-top: -50px;
+	color:#eee;
+}
