@@ -108,7 +108,7 @@ function addPrefixToPhoneNumber(smsToNumber) {
 exports.start = function(req, res) {
   var id = req.params.id;
   // console.log("in start with id:",id)
-  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_ASSIGNED}, {status: orderConstants.STATUS_IN_PRODUCTION}, function(err,order){
+  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_ASSIGNED}, {status: orderConstants.STATUS_IN_PRODUCTION, dateStarted: Date.now()}, function(err,order){
     if (err) {
       res.json(500, {success:false,data:{error:err}});
     } else if (order) {
@@ -157,7 +157,7 @@ function sendOldOrderAndNextOne(res, oldOrder) {
 
 exports.complete = function(req, res) {
   var id = req.params.id;
-  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_IN_PRODUCTION}, {status: orderConstants.STATUS_COMPLETE}, function(err,order) {
+  DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_IN_PRODUCTION}, {status: orderConstants.STATUS_COMPLETE, dateCompleted: Date.now()}, function(err,order) {
     if (err) {
       logError(res, err)
     } else if (order) {

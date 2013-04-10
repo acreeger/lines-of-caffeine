@@ -19,6 +19,8 @@ var DrinkOrderSchema = new Schema({
   station : {type: String, default: "1"},
   assignee : {type: Number, default: -1},
   date: { type: Date, default: Date.now },
+  dateStarted: Date,
+  dateCompleted: Date
 });
 
 mongoose.model('DrinkOrder', DrinkOrderSchema);
