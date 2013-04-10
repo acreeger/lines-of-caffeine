@@ -43,7 +43,11 @@ html, body {
 }
 
 .order {
-	font-size: 28px;
+	font-size: 24px;
+}
+
+.no-orders h4 {
+	font-size: 24px;
 }
 
 .specialInstructions {
