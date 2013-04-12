@@ -91,7 +91,13 @@ block content
         .row
           .span12.align-center
             button#order-button.btn.btn-primary.btn-large Order
-
+        .row
+          .span12.align-center.wait-infos
+            span.hide.no-wait Your order will be made immediately
+            span.hide.one-minute-wait Your order will be ready in a minute or so
+            span.hide.minutes-wait Your order will be ready in about
+              span.wait-length
+            | minutes.
 block late-scripts
   script(src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js")
   script(src="js/customer.js")
