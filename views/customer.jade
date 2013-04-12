@@ -29,11 +29,11 @@ block content
             label.errorMessage(for="phone-number")
         .row
           .span4
-            input#cust-first-name.required.customer-data(type="text", placeholder="Your first name...", name="customer[firstName]")
+            input#cust-first-name.required.customer-data(type="text", placeholder="Your first name...", name="customer[firstName]", autocomplete="off", autocorrect="off", spellcheck="off")
           .span4
-            input#cust-last-name.required.customer-data(type="text", placeholder="Your last name...", name="customer[lastName]")
+            input#cust-last-name.required.customer-data(type="text", placeholder="Your last name...", name="customer[lastName]", autocomplete="off", autocorrect="off",spellcheck="off")
           .span4
-            input#phone-number.required.phoneUS.span4.customer-data(type="tel", placeholder="Your cell number...", name="customer[cellPhone]")
+            input#phone-number.required.phoneUS.span4.customer-data(type="tel", placeholder="Your cell number...", name="customer[cellPhone]", autocomplete="off", autocorrect="off",spellcheck="off")
         .row
           .span4.offset8.hidden-phone.input-helper-text.align-right
             em ...we'll text you when your drink is ready
