@@ -1,3 +1,4 @@
+//TODO: Move to common
 exports.order = {
   STATUS_NEW : "new",
   STATUS_IN_PRODUCTION : "in-production",

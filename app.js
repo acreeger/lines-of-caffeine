@@ -63,8 +63,8 @@ app.post('/api/order/:id/start', routes.drinkOrder.start);
 app.post('/api/order/:id/complete', routes.drinkOrder.complete);
 app.post('/api/order/:id/abort', routes.drinkOrder.abort);
 app.post('/api/order/:id/assign/:assignee', routes.drinkOrder.assign);
-app.get('/api/order/count', routes.drinkOrder.count);
-app.get('/api/queue/wait-estimate', routes.queue.waitEstimate)
+
+app.get('/api/queue/summary', routes.queue.summary);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
