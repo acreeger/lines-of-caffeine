@@ -164,7 +164,7 @@ COFFEE.barista = (function($, ich, shared) {
   }
 
   function getNewOrderCount(cb) {
-    $.get("/api/order/count",{status:"new"}, function(response) {
+    $.get("/api/queue/summary",{num_baristas: numberOfBaristas}, function(response) {
       cb(response);
     }).fail(function(jqXHR,textStatus, errorThrown) {
       if ($.type(cb) === "function") {
@@ -178,6 +178,7 @@ COFFEE.barista = (function($, ich, shared) {
       var count = response.data.count;
       if ($.type(count) == "number"){
         $("#orderCount").text(count);
+        $("#waitingTime").text(response.data.waitingTime);
       } else {
         console.log("Warning: Not updating order count. %s is not a valid order count")
       }

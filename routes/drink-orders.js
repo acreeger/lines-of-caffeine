@@ -4,10 +4,7 @@ var mongoose = require('mongoose')
   , orderConstants = constants.order
   , twilioService = require('../services/twilio-service.js')
   , _s = require('underscore.string')
-
-function logError(res,err) {
-  res.json(500, {success:false,data:{error:err}});
-}
+  , util = require('../common/util')
 
 exports.create = function(req, res) {
   var reqBody = req.body;
@@ -49,13 +46,14 @@ function getInProductionOrders(count, cb) {
   getOrdersForStatus(orderConstants.STATUS_IN_PRODUCTION, count, cb);
 }
 
+//TODO: Move to queue/peek
 exports.request = function(req, res) {
   var ordersRequired = req.query['count'] || 2;
   var newOnly = req.query['new_only'] == "true";
 
   var returnResults = function(err, orders) {
     if (err) {
-      logError(res, err);
+      util.logError(res, err);
     } else {
       res.json(orders);
     }
@@ -65,6 +63,7 @@ exports.request = function(req, res) {
     getNewOrders(ordersRequired, returnResults);
   } else {
     var orders = [];
+    //TODO: Simplify to date only sort?
     getInProductionOrders(ordersRequired, function(err, inProdOrders) {
       orders = orders.concat(inProdOrders);
       ordersRequired -= orders.length;
@@ -144,7 +143,7 @@ exports.start = function(req, res) {
 function sendOldOrderAndNextOne(res, oldOrder) {
   getNewOrders(1, function(err, newOrders) {
     if (err) {
-      logError(res, err);
+      util.logError(res, err);
     } else {
       var nextOrder = null;
       if (newOrders.length > 0) {
@@ -159,7 +158,7 @@ exports.complete = function(req, res) {
   var id = req.params.id;
   DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_IN_PRODUCTION}, {status: orderConstants.STATUS_COMPLETE, dateCompleted: Date.now()}, function(err,order) {
     if (err) {
-      logError(res, err)
+      util.logError(res, err)
     } else if (order) {
       console.log("Updated order",order._id,"to status:",order.status);
       sendOldOrderAndNextOne(res, order);
@@ -167,7 +166,7 @@ exports.complete = function(req, res) {
       //Tell the client why we couldn't find the order
       DrinkOrder.findById(id, function(err, order) {
         if (err) {
-          logError(res, err);
+          util.logError(res, err);
         } else if (order) {
           res.json(500, {success:false,data:{error:"Order has unexpected status: " + order.status}});
         } else {
@@ -182,7 +181,7 @@ exports.abort = function(req, res) {
   var id = req.params.id;
   DrinkOrder.findOneAndUpdate({"_id":id}, {status: orderConstants.STATUS_ABORTED}, function(err,order) {
     if (err) {
-      logError(res, err)
+      util.logError(res, err)
     } else if (order) {
       var smsToNumber = order.customer.cellPhone
       if (validatePhoneNumber(smsToNumber)) {
@@ -208,7 +207,7 @@ exports.assign = function(req, res) {
 
   DrinkOrder.findById(id, function(err, order) {
     if (err) {
-      logError(res, err)
+      util.logError(res, err)
     } else if (order) {
       var updates = {
         "assignee": assignee
@@ -218,7 +217,7 @@ exports.assign = function(req, res) {
 
       DrinkOrder.findByIdAndUpdate(order._id, updates, function(err, order) {
         if (err) {
-          logError(res, err);
+          util.logError(res, err);
         } else {
           res.json({success:true, data: order})
         }
@@ -227,20 +226,4 @@ exports.assign = function(req, res) {
       res.json(404, {success:false,data:{error:"Order cannot be found: " + id}});
     }
   });
-}
-
-exports.count = function(req, res) {
-  var status = req.query["status"];
-  var criteria = {};
-  if (status) {
-    criteria.status = status
-  }
-
-  DrinkOrder.count(criteria, function(err, count) {
-    if (err) {
-      logError(res, err)
-    } else {
-      res.json({success:true, data: {count:count}});
-    }
-  })
 }

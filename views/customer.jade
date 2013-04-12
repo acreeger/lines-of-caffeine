@@ -8,7 +8,11 @@ block content
   button#top-right-reset-button.btn.btn-link.reset-button.pull-right Reset
   .container
     .row
-      .span12.logo-row
+      .span4
+        div#long-wait-caution.hide.text-error The wait for drinks is currently
+          span.wait-length
+          | minutes.
+      .span4.logo-row
         h1: img(src="images/AKQA_BLUEBOTTLE_logo.jpg",title="AKQA & Blue Bottle Coffee")
         //- h3.text-left Caffeine Ordering For Fast Employee Enjoyment
     form#order-form.form-inline
@@ -91,7 +95,14 @@ block content
         .row
           .span12.align-center
             button#order-button.btn.btn-primary.btn-large Order
-
+        .row
+          .span12.align-center
+            span.wait-infos
+              span.hide.wait-info.no-wait Your order will be made immediately
+              span.hide.wait-info.one-minute-wait Your order will be ready in a minute or so
+              span.hide.wait-info.minutes-wait Your order will be ready in about
+                span.wait-length
+                | minutes.
 block late-scripts
   script(src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js")
   script(src="js/customer.js")

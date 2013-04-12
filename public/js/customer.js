@@ -16,6 +16,8 @@ var COFFEE = COFFEE || {};
 COFFEE.customer = (function($) {
   var formValidator;
   var idleTimeMins = 0;
+  var oldWaitingTime = -1;
+  var LONG_WAIT_THRESHOLD = 15
 
   function resetForm() {
     formValidator.resetForm();
@@ -38,6 +40,46 @@ COFFEE.customer = (function($) {
           resetForm();
       }
     }, 60000);
+
+    var hideVisibleWaitInfo = function() {
+      $(".wait-info").filter(":visible").hide();
+    }
+
+    var updateWaitingTime = function() {
+      $.get("/api/queue/summary", function(response){
+        var waitingTime = response.data.waitingTime;
+        if (waitingTime === 0 && oldWaitingTime !== 0) {
+          hideVisibleWaitInfo();
+          $(".no-wait").show();
+        } else if (waitingTime === 1 && oldWaitingTime !== 1) {
+          hideVisibleWaitInfo();
+          $(".one-minute-wait").show();
+        } else if (waitingTime > 1) {
+          if (oldWaitingTime <= 1) {
+            hideVisibleWaitInfo();
+            $(".wait-length").text(waitingTime);
+            $(".minutes-wait").show();
+          } else if(oldWaitingTime !== waitingTime) {
+            //just switch out the numbers
+            var $waitLengthHolder = $(".wait-length")
+            $waitLengthHolder.fadeOut(function (){
+              $waitLengthHolder.text(waitingTime);
+              $waitLengthHolder.fadeIn();
+            })
+          }
+          if (waitingTime > LONG_WAIT_THRESHOLD) {
+            $("#long-wait-caution").fadeIn()
+          } else {
+            $("#long-wait-caution").fadeOut()
+          }          
+        }
+        oldWaitingTime = waitingTime;
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened while getting the queue summary:", errorThrown)});
+    }
+
+    var idleInterval = setInterval(updateWaitingTime, 10000); //TODO: Change to 30s
+    updateWaitingTime();
 
     $(document).on("mousemove click keypress" ,function() {
       idleTimeMins = 0;
@@ -107,7 +149,7 @@ COFFEE.customer = (function($) {
           });
           //IDEA: Inlcude chance to edit phone number in modal?
         })
-        .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened", errorThrown)});
+        .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened while creating order:",serializedForm, errorThrown)});
       }
     });
     var $strengthSelect = $(".caff-level");

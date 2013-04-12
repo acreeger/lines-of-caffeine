@@ -34,3 +34,20 @@ body {
 	margin-top: -50px;
 	color:#eee;
 }
+
+.wait-length {
+	font-weight: bold;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.wait-infos {
+	padding-top: 10px;
+	width: 170px;
+	display: inline-block;
+}
+
+#long-wait-caution {
+	font-weight: bolder;
+	font-size: 26px;
+}

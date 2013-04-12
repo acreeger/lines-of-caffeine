@@ -113,6 +113,10 @@ a {
   display: none;
 }
 
+.nowrap {
+  white-space: nowrap;
+}
+
 /*report */
 .report-table {
   font-size: 12px;
