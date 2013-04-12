@@ -30,8 +30,12 @@ body {
   margin-top:55px;
 }
 
-#top-right-reset-button {
+#top-right-buttons {
 	margin-top: -50px;
+}
+
+
+#top-right-buttons button {
 	color:#eee;
 }
 

@@ -86,6 +86,7 @@ COFFEE.customer = (function($) {
     });
 
     $(".reset-button").on("click", resetForm)
+    $(".refresh-button").on("click", function() {window.location.reload()})
 
     var $orderForm = $("#order-form")
     formValidator = $orderForm.validate({

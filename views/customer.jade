@@ -5,7 +5,10 @@ block head
 block content
   if (!twilioEnabled)
     p.sms-disabled-warning Text messaging functionality has been disabled.
-  button#top-right-reset-button.btn.btn-link.reset-button.pull-right Reset
+  div#top-right-buttons.pull-right
+    button#top-right-refresh-button.btn.btn-link.refresh-button
+      i.icon-refresh
+    button#top-right-reset-button.btn.btn-link.reset-button Reset
   .container
     .row
       .span4
