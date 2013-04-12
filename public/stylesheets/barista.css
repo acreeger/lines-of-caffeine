@@ -51,7 +51,7 @@ html, body {
 }
 
 .specialInstructions {
-	font-size: 14px;
+	font-size: 22px;
 }
 
 .order-action-buttons {
@@ -59,8 +59,8 @@ html, body {
 }
 
 .order-action-buttons button {
-	height: 60px;
-	font-size: 24px;
+	height: 90px;
+	font-size: 28px;
 }
 
 .mark-as-aborted {

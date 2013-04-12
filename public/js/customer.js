@@ -112,7 +112,7 @@ COFFEE.customer = (function($) {
         $("#entered-special-requests").hide();
       }
     }).charCount({
-      allowed: 380,
+      allowed: 110,
       warning: 20,
       counterText: 'Characters left: ',
       cssWarning: 'text-warning',
