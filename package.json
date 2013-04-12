@@ -15,6 +15,7 @@
     "mongoose": "*",
     "twilio": "*",
     "getenv": "*",
+    "underscore" : "*",
     "underscore.string": "*"
   }
 }

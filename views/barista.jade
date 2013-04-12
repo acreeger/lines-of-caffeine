@@ -13,7 +13,7 @@ block content
           with
           <strong>{{milk}}</strong>
           milk for
-          <strong>{{name}}</strong>
+          <strong class="nowrap">{{name}}</strong>
         </p>
         {{#specialInstructions}}
         <p class="specialInstructions"><em>{{specialInstructions}}</em></p>
@@ -35,6 +35,10 @@ block content
       .span12 Number of orders:&nbsp;&nbsp;
         strong
           span#orderCount
+        | , estimated waiting time:&nbsp;&nbsp;
+        strong
+          span#waitingTime
+        | &nbsp;mins
   #order-info-container.scroll-y.content.xrow
     mixin barista-view(baristaNumber)
       div(class="barista-container barista-count-#{numberOfBaristas}",id="barista#{baristaNumber}",data-barista-id="#{baristaNumber}")
