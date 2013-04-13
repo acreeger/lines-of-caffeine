@@ -20,5 +20,6 @@ exports.config = {
      * production applications.
      */
     level : 'info'
-  }
+  },
+  agent_enabled: false
 };
