@@ -1,6 +1,6 @@
 var mongoose = require('mongoose')
   , DrinkOrder = mongoose.model('DrinkOrder')
-  , constants = require('../models/constants')
+  , constants = require('../common/constants')
   , orderConstants = constants.order
   , twilioService = require('../services/twilio-service.js')
   , _s = require('underscore.string')

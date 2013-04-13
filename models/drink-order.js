@@ -1,7 +1,7 @@
 var mongoose = require('mongoose')
   , env = process.env.NODE_ENV || 'development'
   , Schema = mongoose.Schema
-  , constants = require('./constants').order;
+  , constants = require('../common/constants').order;
 
 var DrinkOrderSchema = new Schema({
   customer : {
