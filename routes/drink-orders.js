@@ -12,13 +12,11 @@ exports.create = function(req, res) {
   var order = new DrinkOrder(reqBody);
   order.save(function(err) {
     if (err) {
-      console.log("Received error:", err);
-      res.json(500, {
-        success:false,
-        data: {
-          error : err
-        }
-      });
+      var status = typeof err.errors !== "undefined" ? 400 : 500
+      if (status === 500) {
+        console.log("Received unexpected error while saving order:",order, err);
+      }
+      util.logError(res, err, status);
     } else {
       // res.redirect('/api/order/'+order._id)
       res.json({success:true, data: order});

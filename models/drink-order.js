@@ -5,14 +5,14 @@ var mongoose = require('mongoose')
 
 var DrinkOrderSchema = new Schema({
   customer : {
-    firstName: String,
-    lastName: String,
+    firstName: {type:String, required:true},
+    lastName: {type:String, required:true},
     cellPhone: String
   },
   drinks : [{
-    strength : String,
-    drinkType : String,
-    milk : String,
+    strength : {type:String, required:true},
+    drinkType : {type:String, required:true},
+    milk : {type:String, required:true},
     specialInstructions : String
   }],
   status : {type: String, default: constants.STATUS_NEW},
