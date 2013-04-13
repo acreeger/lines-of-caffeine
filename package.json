@@ -16,6 +16,7 @@
     "twilio": "*",
     "getenv": "*",
     "underscore" : "*",
-    "underscore.string": "*"
+    "underscore.string": "*",
+    "newrelic": "*"
   }
 }

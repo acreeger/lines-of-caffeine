@@ -2,7 +2,7 @@
 /**
  * Module dependencies.
  */
-
+require('newrelic');
 var express = require('express')
   , fs = require('fs')
   , http = require('http')

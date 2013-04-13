@@ -1,3 +1,4 @@
 node_modules
 .DS_Store
 public/img/akqa-logo.png
+newrelic_agent.log
