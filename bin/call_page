@@ -1,18 +1,22 @@
 #! /app/bin/node
 var http = require("http");
 
-function callPage() {
-	var options = {
-	  host: 'lines-of-caffeine.herokuapp.com',
-	  port: 80,
-	  path: '/'
-	};
+function callPage(url) {
+	if (url) {
+		var options = {
+		  host: url,
+		  port: 80,
+		  path: '/'
+		};
 
-	http.get(options, function(res) {
-	  console.log("Got response: " + res.statusCode);
-	}).on('error', function(e) {
-	  console.log("Got error: " + e.message);
-	});
+		http.get(options, function(res) {
+		  console.log("callPage: Got response: " + res.statusCode);
+		}).on('error', function(e) {
+		  console.log("Got error: " + e.message);
+		});
+	} else {
+		console.log("callPage: Not executing because environment variable CALL_PAGE_HOST is not set.");
+	}
 }
-callPage();
+callPage(process.env.CALL_PAGE_HOST);
 //exit();
