@@ -5,28 +5,28 @@ var mongoose = require('mongoose')
   , twilioService = require('../services/twilio-service.js')
   , _s = require('underscore.string')
   , util = require('../common/util')
+  , CustomValidationError = require('../common/errors').CustomValidationError;
 
 exports.create = function(req, res) {
   var reqBody = req.body;
   //TODO: Seems insecure
   var order = new DrinkOrder(reqBody);
+  order.contactInfo = reqBody.customer.contactInfo;
   order.save(function(err) {
     if (err) {
-      var status = typeof err.errors !== "undefined" ? 400 : 500
+      var status = (err instanceof CustomValidationError || typeof err.errors !== "undefined") ? 400 : 500
       if (status === 500) {
         console.log("Received unexpected error while saving order:",order, err);
       }
-      util.logError(res, err, status);
+      util.sendError(res, err, status);
     } else {
       // res.redirect('/api/order/'+order._id)
       res.json({success:true, data: order});
     }
   });
 
-  //TODO: Implement number formatting and validation on client side
+  //TODO: Implement phone number formatting client side
 }
-
-//TODO: counts of new orders
 
 function getOrdersForStatus(status, count, cb) {
   DrinkOrder.find({status:status}).limit(count).sort('date').exec(cb);
@@ -45,13 +45,14 @@ function getInProductionOrders(count, cb) {
 }
 
 //TODO: Move to queue/peek
+//TODO: Change this to use same response format as other api calls
 exports.request = function(req, res) {
   var ordersRequired = req.query['count'] || 2;
   var newOnly = req.query['new_only'] == "true";
 
   var returnResults = function(err, orders) {
     if (err) {
-      util.logError(res, err);
+      util.sendError(res, err);
     } else {
       res.json(orders);
     }
@@ -87,12 +88,6 @@ exports.request = function(req, res) {
   }
 }
 
-function validatePhoneNumber(phone_number) {
-  phone_number = phone_number.replace(/\s+/g, "");
-  return phone_number.length > 9 &&
-    phone_number.match(/^(\+?1-?)?(\([2-9]\d{2}\)|[2-9]\d{2})-?[2-9]\d{2}-?\d{4}$/);
-}
-
 function addPrefixToPhoneNumber(smsToNumber) {
   var prefix;
   if (smsToNumber.substring(0,2) == "+1") prefix = ""
@@ -102,25 +97,35 @@ function addPrefixToPhoneNumber(smsToNumber) {
   return smsToNumber
 }
 
+function sendTextMessage(order) {
+  var smsToNumber = order.cellPhone
+  smsToNumber = addPrefixToPhoneNumber(smsToNumber)
+  var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
+  var smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
+                                order.customer.firstName
+                              , drinkType
+                              );
+  twilioService.sendSMS(smsMessage, smsToNumber);
+}
+
+function sendEmailMessage(order) {
+  //TODO:
+  console.log("SENDING EMAIL!")
+}
+
 exports.start = function(req, res) {
   var id = req.params.id;
-  // console.log("in start with id:",id)
   DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_ASSIGNED}, {status: orderConstants.STATUS_IN_PRODUCTION, dateStarted: Date.now()}, function(err,order){
     if (err) {
       res.json(500, {success:false,data:{error:err}});
     } else if (order) {
       console.log("Updated order",order._id,"to status:",order.status);
-      var smsToNumber = order.customer.cellPhone
-      if (validatePhoneNumber(smsToNumber)) {
-        smsToNumber = addPrefixToPhoneNumber(smsToNumber)
-        var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-        var smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
-                                      order.customer.firstName
-                                    , drinkType
-                                    );
-        twilioService.sendSMS(smsMessage, smsToNumber);
+      if (order.hasValidCellPhone()) {
+        sendTextMessage(order)
+      } else if (order.hasValidEmailAddress()){
+        sendEmailMessage(order)
       } else {
-        console.log("Not sending SMS to %s as it doesn't appear to be a valid number", smsToNumber)
+        console.log("Not sending SMS or email to %s %s for order %s as it doesn't appear have valid contact info", order.customer.firstName, order.customer.lastName, order.id)    
       }
       res.json({success:true, data: order})
     } else {
@@ -141,7 +146,7 @@ exports.start = function(req, res) {
 function sendOldOrderAndNextOne(res, oldOrder) {
   getNewOrders(1, function(err, newOrders) {
     if (err) {
-      util.logError(res, err);
+      util.sendError(res, err);
     } else {
       var nextOrder = null;
       if (newOrders.length > 0) {
@@ -156,7 +161,7 @@ exports.complete = function(req, res) {
   var id = req.params.id;
   DrinkOrder.findOneAndUpdate({"_id":id, status: orderConstants.STATUS_IN_PRODUCTION}, {status: orderConstants.STATUS_COMPLETE, dateCompleted: Date.now()}, function(err,order) {
     if (err) {
-      util.logError(res, err)
+      util.sendError(res, err)
     } else if (order) {
       console.log("Updated order",order._id,"to status:",order.status);
       sendOldOrderAndNextOne(res, order);
@@ -164,7 +169,7 @@ exports.complete = function(req, res) {
       //Tell the client why we couldn't find the order
       DrinkOrder.findById(id, function(err, order) {
         if (err) {
-          util.logError(res, err);
+          util.sendError(res, err);
         } else if (order) {
           res.json(500, {success:false,data:{error:"Order has unexpected status: " + order.status}});
         } else {
@@ -179,7 +184,7 @@ exports.abort = function(req, res) {
   var id = req.params.id;
   DrinkOrder.findOneAndUpdate({"_id":id}, {status: orderConstants.STATUS_ABORTED}, function(err,order) {
     if (err) {
-      util.logError(res, err)
+      util.sendError(res, err)
     } else if (order) {
       var smsToNumber = order.customer.cellPhone
       if (validatePhoneNumber(smsToNumber)) {
@@ -205,7 +210,7 @@ exports.assign = function(req, res) {
 
   DrinkOrder.findById(id, function(err, order) {
     if (err) {
-      util.logError(res, err)
+      util.sendError(res, err)
     } else if (order) {
       var updates = {
         "assignee": assignee
@@ -215,7 +220,7 @@ exports.assign = function(req, res) {
 
       DrinkOrder.findByIdAndUpdate(order._id, updates, function(err, order) {
         if (err) {
-          util.logError(res, err);
+          util.sendError(res, err);
         } else {
           res.json({success:true, data: order})
         }
