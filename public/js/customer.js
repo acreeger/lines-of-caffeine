@@ -17,7 +17,7 @@ COFFEE.customer = (function($) {
   var formValidator;
   var idleTimeMins = 0;
   var oldWaitingTime = -1;
-  var LONG_WAIT_THRESHOLD = 15
+  var LONG_WAIT_THRESHOLD = 15;
 
   function resetForm() {
     formValidator.resetForm();
@@ -64,21 +64,22 @@ COFFEE.customer = (function($) {
             var $waitLengthHolder = $(".wait-length")
             $waitLengthHolder.fadeOut(function (){
               $waitLengthHolder.text(waitingTime);
-              $waitLengthHolder.fadeIn();
+              $waitLengthHolder.fadeIn(function() {
+                if (waitingTime > LONG_WAIT_THRESHOLD) {
+                  $("#long-wait-caution").fadeIn()
+                } else {
+                  $("#long-wait-caution").fadeOut()
+                }
+              });
             })
           }
-          if (waitingTime > LONG_WAIT_THRESHOLD) {
-            $("#long-wait-caution").fadeIn()
-          } else {
-            $("#long-wait-caution").fadeOut()
-          }          
         }
         oldWaitingTime = waitingTime;
       })
       .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened while getting the queue summary:", errorThrown)});
     }
 
-    var idleInterval = setInterval(updateWaitingTime, 10000); //TODO: Change to 30s
+    var idleInterval = setInterval(updateWaitingTime, 30000);
     updateWaitingTime();
 
     $(document).on("mousemove click keypress" ,function() {
@@ -154,7 +155,7 @@ COFFEE.customer = (function($) {
           $("#order-success").one("show", function() {
             timeoutHandler = window.setTimeout(function() {
               $("#order-success").modal('hide')
-            }, 10000);
+            }, 5000);
           })
           .modal()
           .one("hide",function() {
