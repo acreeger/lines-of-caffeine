@@ -88,17 +88,34 @@ COFFEE.customer = (function($) {
     $(".reset-button").on("click", resetForm)
     $(".refresh-button").on("click", function() {window.location.reload()})
 
-    var $orderForm = $("#order-form")
+    var $orderForm = $("#order-form");
+
+    var emailOrUSPhoneNumber = function(value, element) {
+
+      return this.optional(element)
+        || $.validator.methods.email.call(this, value, element)
+        || $.validator.methods.phoneUS.call(this, value, element)
+    }
+
+    $.validator.addMethod("emailOrUSPhoneNumber", emailOrUSPhoneNumber, "Please enter a valid email address or US phone number");
+
     formValidator = $orderForm.validate({
       errorClass: "errorMessage",
       messages: {
         "customer[firstName]" :{"required" : "What will we call you?"},
         "customer[lastName]": {"required" : "Type at least the first letter"},
-        "customer[cellPhone]": {
-          "required" : "Add your digits please",
-          "phoneUS" : "This doesn't look right"
+        "customer[contactInfo]": {
+          "required" : "Add your digits or email please",
+          "emailOrUSPhoneNumber" : "Sure this is a valid email or US cell number?"
         }
-      }
+      },
+      rules: {
+        "customer[contactInfo]" : {
+          required: true,
+          emailOrUSPhoneNumber: true
+        }
+      },
+      ignoreTitle: true
     });
 
     $("#special-instructions").on("shown", function() {
@@ -150,7 +167,11 @@ COFFEE.customer = (function($) {
           });
           //IDEA: Inlcude chance to edit phone number in modal?
         })
-        .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened while creating order:",serializedForm, errorThrown)});
+        .fail(function(jqXHR, textStatus, errorThrown) {
+          console.log("An error happened while creating order:",serializedForm, errorThrown)
+          alert("Ruh-roh, Raggy! Something went wrong when placing your order. Please try again!");
+          $button.prop("disabled", false);
+        });
       }
     });
     var $strengthSelect = $(".caff-level");

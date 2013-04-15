@@ -45,6 +45,7 @@ app.configure(function(){
     res.locals.drinkTypes = constants.drinkTypes;
     res.locals.strengthTypes = constants.strengthTypes;
     res.locals.milkTypes = constants.milkTypes;
+    res.locals.EMAIL_VALIDATION_REGEX = constants.EMAIL_VALIDATION_REGEX;
     next();
   });
   app.use(express.bodyParser());

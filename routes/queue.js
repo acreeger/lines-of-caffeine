@@ -23,7 +23,7 @@ exports.summary = function(req, res) {
 
   DrinkOrder.count({"status":"new"}, function(err, count) {
     if (err) {
-      util.logError(res, err)
+      util.sendError(res, err)
     } else {
       var timeUntilOrderIsStarted;
       if (count === 0) {
