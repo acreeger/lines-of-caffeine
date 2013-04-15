@@ -80,6 +80,11 @@ html, body {
 	/*color:#006dcc;*/
 }
 
+.refresh-button, .refresh-button:active, .refresh-button:hover {
+	text-decoration: none;
+	color:#999;
+}
+
 .xrow, .xcol { overflow: hidden; position: absolute; }
 .xrow { left: 0; right: 0; }
 .xcol { top: 0; bottom: 0; }

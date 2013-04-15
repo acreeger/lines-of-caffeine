@@ -262,7 +262,8 @@ COFFEE.barista = (function($, ich, shared) {
       $(document).on("click", ".mark-as-aborted, .mark-as-done", function() {
         changeStatusAndGetNextOrder(this)
       });
-      //TODO: Get the count of unopened orders
+
+      $(".refresh-button").on("click", function(){window.location.reload()});
     });
   }
 
