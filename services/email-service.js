@@ -24,7 +24,7 @@ exports.sendEmail = function(toName, toEmail, from, subject, body, cb) {
     mandrill('/messages/send', {
       message: {
         to: [{name: toName, email: toEmail}],
-        from_name: 'The Espresso Gods',
+        from_name: getenv("EMAIL_FROM_NAME", 'The Espresso Gods'),
         from_email: from,
         subject: subject,
         text: body

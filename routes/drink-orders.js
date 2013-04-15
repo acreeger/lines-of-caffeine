@@ -6,7 +6,8 @@ var mongoose = require('mongoose')
   , emailService = require('../services/email-service.js')
   , _s = require('underscore.string')
   , util = require('../common/util')
-  , CustomValidationError = require('../common/errors').CustomValidationError;
+  , CustomValidationError = require('../common/errors').CustomValidationError
+  , getenv = require("getenv");
 
 exports.create = function(req, res) {
   var reqBody = req.body;
@@ -117,7 +118,7 @@ function sendOrderAbortedTextMessage(order) {
   twilioService.sendSMS(smsMessage, smsToNumber);
 }
 
-var EMAIL_CONF_FROM_ADDRESS = "dontwait@linesofcaffeine.com"
+var EMAIL_CONF_FROM_ADDRESS = getenv("EMAIL_FROM_ADDRESS","dontwait@linesofcaffeine.com");
 
 function sendOrderStartedEmailMessage(order) {
   var emailAddress = order.emailAddress;
