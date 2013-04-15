@@ -17,6 +17,7 @@
     "getenv": "*",
     "underscore" : "*",
     "underscore.string": "*",
-    "newrelic": "*"
+    "newrelic": "*",
+    "mailchimp": "*"
   }
 }

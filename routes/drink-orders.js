@@ -3,6 +3,7 @@ var mongoose = require('mongoose')
   , constants = require('../common/constants')
   , orderConstants = constants.order
   , twilioService = require('../services/twilio-service.js')
+  , emailService = require('../services/email-service.js')
   , _s = require('underscore.string')
   , util = require('../common/util')
   , CustomValidationError = require('../common/errors').CustomValidationError;
@@ -20,7 +21,6 @@ exports.create = function(req, res) {
       }
       util.sendError(res, err, status);
     } else {
-      // res.redirect('/api/order/'+order._id)
       res.json({success:true, data: order});
     }
   });
@@ -108,9 +108,18 @@ function sendTextMessage(order) {
   twilioService.sendSMS(smsMessage, smsToNumber);
 }
 
+var EMAIL_CONF_FROM_ADDRESS = "noreply@skipthe.linesofcaffeine.com"
+
 function sendEmailMessage(order) {
   //TODO:
-  console.log("SENDING EMAIL!")
+  var emailAddress = order.emailAddress;
+  var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
+  var subject = _s.sprintf("Your %s will be ready soon - come get it!");
+  var body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nLove,\n\nThe folks from Culture and Wellness.",
+                              order.customer.firstName
+                            , drinkType
+                            );
+  emailService.sendEmail(emailAddress, EMAIL_CONF_FROM_ADDRESS, subject, body);
 }
 
 exports.start = function(req, res) {
