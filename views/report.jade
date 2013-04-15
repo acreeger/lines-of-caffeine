@@ -15,14 +15,14 @@ block content
         table.table.table-bordered.report-table
           thead: tr
             th Name
-            th Cell Number
+            th Contact Info
             th Status
             th Drink (raw)
             th Date
             th Order Id
           mixin orderRow(order)
             td #{order.customer.firstName} #{order.customer.lastName}
-              td #{order.customer.cellPhone}
+              td #{order.contactInfo}
               td #{order.status}
                 if (order.status === "assigned" || order.status === "in-production")
                   span &nbsp;(#{order.assignee + 1}) 
