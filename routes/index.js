@@ -35,7 +35,7 @@ exports.report = function(req, res) {
 			criteria["status"] = status
 		}
 	  DrinkOrder.find(criteria).limit(limit).sort(sort).exec(function (err, orders) {
-	  	res.render('report', {title: 'Lines of Caffeine - Order Report', orders: orders})
+	  	res.render('report', {title: 'Grab Go Coffee - Order Report', orders: orders})
 	  });
 	}
 }
