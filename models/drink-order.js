@@ -51,6 +51,10 @@ DrinkOrderSchema.virtual('emailAddress').get(function () {
   return this.customer.emailAddress;
 });
 
+DrinkOrderSchema.virtual('fullName').get(function() {
+  return this.customer.firstName + ' ' + this.customer.lastName;
+})
+
 DrinkOrderSchema.virtual('contactInfo').get(getContactInfo).set(setContactInfo);
 
 DrinkOrderSchema.pre("validate", function(next) {

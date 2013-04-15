@@ -97,7 +97,7 @@ function addPrefixToPhoneNumber(smsToNumber) {
   return smsToNumber
 }
 
-function sendTextMessage(order) {
+function sendOrderStartedTextMessage(order) {
   var smsToNumber = order.cellPhone
   smsToNumber = addPrefixToPhoneNumber(smsToNumber)
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
@@ -108,18 +108,37 @@ function sendTextMessage(order) {
   twilioService.sendSMS(smsMessage, smsToNumber);
 }
 
-var EMAIL_CONF_FROM_ADDRESS = "noreply@skipthe.linesofcaffeine.com"
+function sendOrderAbortedTextMessage(order) {
+  var smsToNumber = order.cellPhone
+  smsToNumber = addPrefixToPhoneNumber(smsToNumber)
+  var smsMessage = _s.sprintf("Hi %s. Unfortunately there was a problem with your drink order. Please come see us to sort it out. Sorry about that!",
+                                order.customer.firstName
+                              );
+  twilioService.sendSMS(smsMessage, smsToNumber);
+}
 
-function sendEmailMessage(order) {
-  //TODO:
+var EMAIL_CONF_FROM_ADDRESS = "dontwait@linesofcaffeine.com"
+
+function sendOrderStartedEmailMessage(order) {
   var emailAddress = order.emailAddress;
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-  var subject = _s.sprintf("Your %s will be ready soon - come get it!");
-  var body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nLove,\n\nThe folks from Culture and Wellness.",
+  var subject = _s.sprintf("Your %s will be ready soon - come get it!", drinkType);
+  var body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
                               order.customer.firstName
                             , drinkType
                             );
-  emailService.sendEmail(emailAddress, EMAIL_CONF_FROM_ADDRESS, subject, body);
+  emailService.sendEmail(order.fullName, emailAddress, EMAIL_CONF_FROM_ADDRESS, subject, body);
+}
+
+function sendOrderAbortedEmailMessage(order) {
+  //TODO:
+  var emailAddress = order.emailAddress;
+  var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
+  var subject = _s.sprintf("Their was a problem with your drink order");
+  var body = _s.sprintf("Hi %s,\n\nUnfortunately there was a problem with your drink order. Please come see us to sort it out. Sorry about that!\n\nThe folks from Culture and Wellness. <3",
+                              order.customer.firstName
+                            );
+  emailService.sendEmail(order.fullName, emailAddress, EMAIL_CONF_FROM_ADDRESS, subject, body);
 }
 
 exports.start = function(req, res) {
@@ -130,11 +149,11 @@ exports.start = function(req, res) {
     } else if (order) {
       console.log("Updated order",order._id,"to status:",order.status);
       if (order.hasValidCellPhone()) {
-        sendTextMessage(order)
+        sendOrderStartedTextMessage(order)
       } else if (order.hasValidEmailAddress()){
-        sendEmailMessage(order)
+        sendOrderStartedEmailMessage(order)
       } else {
-        console.log("Not sending SMS or email to %s %s for order %s as it doesn't appear have valid contact info", order.customer.firstName, order.customer.lastName, order.id)    
+        console.log("Not sending order started SMS or email to %s %s for order %s as it doesn't appear have valid contact info", order.customer.firstName, order.customer.lastName, order.id)    
       }
       res.json({success:true, data: order})
     } else {
@@ -195,16 +214,12 @@ exports.abort = function(req, res) {
     if (err) {
       util.sendError(res, err)
     } else if (order) {
-      var smsToNumber = order.customer.cellPhone
-      if (validatePhoneNumber(smsToNumber)) {
-        smsToNumber = addPrefixToPhoneNumber(smsToNumber)
-        var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-        var smsMessage = _s.sprintf("Hi %s. Unfortunately there was a problem with your drink order. Please come see us to sort it out. Sorry about that!",
-                                      order.customer.firstName
-                                    );
-        twilioService.sendSMS(smsMessage, smsToNumber);
+      if (order.hasValidCellPhone()) {
+        sendOrderAbortedTextMessage(order)
+      } else if (order.hasValidEmailAddress()){
+        sendOrderAbortedEmailMessage(order)
       } else {
-        console.log("Not sending cancellation SMS to %s as it doesn't appear to be a valid number", smsToNumber)
+        console.log("Not sending order aborted SMS or email to %s %s for order %s as it doesn't appear have valid contact info", order.customer.firstName, order.customer.lastName, order.id)    
       }
       sendOldOrderAndNextOne(res, order);
     } else {
