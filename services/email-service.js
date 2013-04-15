@@ -18,7 +18,7 @@ if (emailEnabled) {
 
 exports.sendEmail = function(toName, toEmail, from, subject, body, cb) {
   if (!emailEnabled) {
-    console.log("Not sending email to %s because Mandrill functionality has not been enabled", to);
+    console.log("Not sending email to %s because Mandrill functionality has not been enabled", toName);
   } else {
     console.log("About to send email to %s <%s>",toName, toEmail);
     mandrill('/messages/send', {
