@@ -11,14 +11,14 @@ exports.queue = require('./queue');
  */
 exports.customer = function(req, res){
   res.render('customer', {
-    title: 'Lines of Caffeine - Customer View'
+    title: 'Grab Go Coffee - Customer View'
   , twilioEnabled: twilioEnabled
   });
 };
 
 exports.barista = function(req, res) {
   var numberOfBaristas = req.params.numberOfBaristas || 2 //DEFAULT IS 2
-	res.render('barista', {title: 'Lines of Caffeine - Barista View', numberOfBaristas: numberOfBaristas })
+	res.render('barista', {title: 'Grab Go Coffee - Barista View', numberOfBaristas: numberOfBaristas })
 };
 
 exports.report = function(req, res) {
