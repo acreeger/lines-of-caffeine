@@ -65,13 +65,13 @@ exports.request = function(req, res) {
     //TODO: Simplify to date only sort?
     getInProductionOrders(ordersRequired, function(err, inProdOrders) {
       orders = orders.concat(inProdOrders);
-      ordersRequired -= orders.length;
+      ordersRequired -= inProdOrders.length;
 
       //TODO: Iterate through a list instead of this - its a bit clumsy
       if (ordersRequired > 0) {
         getAssignedOrders(ordersRequired, function(err, assignedOrders) {
           orders = orders.concat(assignedOrders);
-          ordersRequired -= orders.length
+          ordersRequired -= assignedOrders.length
           if (ordersRequired > 0) {
             getNewOrders(ordersRequired, function(err, newOrders) {
               orders = orders.concat(newOrders);
