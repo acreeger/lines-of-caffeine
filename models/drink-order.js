@@ -24,7 +24,8 @@ var DrinkOrderSchema = new Schema({
   assignee : {type: Number, default: -1},
   date: { type: Date, default: Date.now },
   dateStarted: Date,
-  dateCompleted: Date
+  dateCompleted: Date,
+  estimatedCompletionWait: Number
 });
 
 var getContactInfo = function() {

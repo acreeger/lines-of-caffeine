@@ -79,7 +79,7 @@ COFFEE.customer = (function($) {
       .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened while getting the queue summary:", errorThrown)});
     }
 
-    var idleInterval = setInterval(updateWaitingTime, 30000);
+    var idleInterval = setInterval(updateWaitingTime, 7000);
     updateWaitingTime();
 
     $(document).on("mousemove click keypress" ,function() {
@@ -148,6 +148,7 @@ COFFEE.customer = (function($) {
         $button = $(this).prop("disabled", true);
         var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
         var serializedForm = $('#order-form').serializeObject();
+        serializedForm.estimatedCompletionWait = oldWaitingTime;
         $disabledElems.prop("disabled", true);
         var jqxhr = $.post('/api/order',serializedForm).done(function(data) {
           console.log("Success! Got data", data);

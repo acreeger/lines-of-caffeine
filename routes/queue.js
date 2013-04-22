@@ -2,10 +2,11 @@ var mongoose = require('mongoose')
   , DrinkOrder = mongoose.model('DrinkOrder')
   , _ = require("underscore")
   , util = require("../common/util")
+  , constants = require("../common/constants")
 
-var AVERAGE_TIME_TO_MAKE_DRINK = 2.2
-var DEFAULT_NUMBER_OF_BARISTAS = 2
-var TIME_BETWEEN_DRINKS = 0.73
+var AVERAGE_TIME_TO_MAKE_DRINK = constants.AVERAGE_TIME_TO_MAKE_DRINK
+var DEFAULT_NUMBER_OF_BARISTAS = constants.DEFAULT_NUMBER_OF_BARISTAS
+var TIME_BETWEEN_DRINKS = constants.TIME_BETWEEN_DRINKS
 
 exports.summary = function(req, res) {
   var status = req.query["status"];
