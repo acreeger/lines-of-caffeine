@@ -3,8 +3,9 @@ var mongoose = require('mongoose')
   , _ = require("underscore")
   , util = require("../common/util")
 
-var AVERAGE_TIME_TO_MAKE_DRINK = 2
+var AVERAGE_TIME_TO_MAKE_DRINK = 2.2
 var DEFAULT_NUMBER_OF_BARISTAS = 2
+var TIME_BETWEEN_DRINKS = 0.73
 
 exports.summary = function(req, res) {
   var status = req.query["status"];
@@ -29,9 +30,9 @@ exports.summary = function(req, res) {
       if (count === 0) {
         timeUntilOrderIsStarted = 0
       } else if (count < numberOfBaristas) {
-        timeUntilOrderIsStarted = (AVERAGE_TIME_TO_MAKE_DRINK / (numberOfBaristas + 1))
+        timeUntilOrderIsStarted = ((AVERAGE_TIME_TO_MAKE_DRINK + TIME_BETWEEN_DRINKS) / (numberOfBaristas + 1))
       } else {
-        timeUntilOrderIsStarted = Math.round(count / (numberOfBaristas / AVERAGE_TIME_TO_MAKE_DRINK))
+        timeUntilOrderIsStarted = Math.round(count / (numberOfBaristas / (AVERAGE_TIME_TO_MAKE_DRINK + TIME_BETWEEN_DRINKS)))
       }
       var time = Math.round(timeUntilOrderIsStarted + AVERAGE_TIME_TO_MAKE_DRINK);
       res.json({success:true, data: {count:count, waitingTime: time}});
