@@ -19,6 +19,17 @@ COFFEE.barista = (function($, ich, shared) {
     return orderStore[id];
   }
 
+  function removeOrderFromStore(id) {
+    delete orderStore[id];
+  }
+
+  function visitOrderStore(cb) {
+    for(var key in orderStore) {
+      var value = orderStore[key];
+      if (typeof cb === "function") cb(key, value)
+    }
+  }
+
   function isBaristaValid(baristaId) {
     return baristaId < baristas.length;
   }
@@ -119,6 +130,7 @@ COFFEE.barista = (function($, ich, shared) {
     var orderId = baristas[baristaId]
     if (orderId) {
       _clearAssignedOrderFromBarista(baristaId);
+      removeOrderFromStore(orderId);
       unassignedBaristasCount++;
       var $order = $("#order-" + orderId);
       $order.fadeOut(function() {
@@ -137,20 +149,34 @@ COFFEE.barista = (function($, ich, shared) {
     var action = $button.attr("data-action-type");
     var url = "/api/order/" + orderId + "/" + action
     $.post(url, function(response) {
-      updateOrderStore(response.data);
+      //HACK: I'm doing this because the order API is inconsistent with it's response format.
+      //TODO: Refactor API so orders are returned in an order property, not directly under the data.
+      //      That way the order that was acted upon is always returned in a  consistent manner.
+      if (response.data && response.data._id) updateOrderStore(response.data);
       if (cb && typeof cb === "function") cb(orderId, $order, response);
     })
   }
 
   var ASSIGNED_STATUSES = ["in-production","assigned"];
 
-  function getMoreOrders(numberOfBaristas) {
+  function getMoreOrders(numberOfBaristas, partial) {
     //TODO: Handle syncing screen when an order is removed
     $.get('/api/order/request', {count: numberOfBaristas, new_only: false}, function(orders) {
       var ordersToBeAssigned = orders;
       var succesfullyAssignedOrders = []; //will populate as we assign
       var orderStatusMap = {};
       var baristasAssigned = [];
+      var orderIds = $.map(orders, function(element) {return element._id})
+
+      if (!partial) {
+        visitOrderStore(function(orderId, order) {
+          if ($.inArray(orderId, orderIds) === -1) {
+            console.log("Order %s is no longer in orders returned from the server. Unassigning from barista %s", orderId, order.assignee);
+            clearAssignedOrderFromBarista(order.assignee);
+          }
+        });
+      }
+
       //intialize the status map with empty arrays
       $.each(ASSIGNED_STATUSES, function() {orderStatusMap[this] = []});
       //populate the status map
@@ -184,8 +210,6 @@ COFFEE.barista = (function($, ich, shared) {
           baristasAssigned.push(newAssignee);
         }
       }
-
-      //get the keys from unassigned
 
       //if there are any other barista
       //this relies upon the baristas array being updated in real time. (not in a callback)
@@ -223,7 +247,7 @@ COFFEE.barista = (function($, ich, shared) {
     // if (unassignedBaristasCount > 0){
       // console.log("refreshOrders: unassignedBaristasCount is non-zero:",unassignedBaristasCount)
       //I wonder if there is a race condition here. What happens if this fires at the same time as "done" action
-      getMoreOrders(numberOfBaristas);
+      getMoreOrders(numberOfBaristas, false);
     // } else {
       //let's update the count.
       //TODO: Move this out.
@@ -238,7 +262,7 @@ COFFEE.barista = (function($, ich, shared) {
     unassignedBaristasCount = numberOfBaristas;
     baristas = new Array(numberOfBaristas);
     $(function() {
-      getMoreOrders(numBaristas);
+      getMoreOrders(numBaristas, false);
 
       pollingHandler = setTimeout(refreshOrders, 5000);
       getNewOrderCount(updateOrderCountFromServerResponse);
