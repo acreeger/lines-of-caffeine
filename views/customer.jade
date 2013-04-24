@@ -3,8 +3,11 @@ block head
   link(rel='stylesheet', media='screen', href='/stylesheets/customer.css')
 
 block content
-  if (!twilioEnabled)
-    p.sms-disabled-warning Text messaging functionality has been disabled.
+  .disabled-warnings
+    if (!twilioEnabled)
+      p Text messaging functionality has been disabled.
+    if (!emailEnabled)
+      p Email functionality has been disabled.
   div#top-right-buttons.pull-right
     button#top-right-refresh-button.btn.btn-link.refresh-button
       i.icon-refresh

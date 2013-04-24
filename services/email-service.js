@@ -16,6 +16,10 @@ if (emailEnabled) {
   console.log("Mandrill integration not enabled.")
 }
 
+exports.emailEnabled = function() {
+  return emailEnabled;
+}
+
 exports.sendEmail = function(toName, toEmail, from, subject, body, cb) {
   if (!emailEnabled) {
     console.log("Not sending email to %s because Mandrill functionality has not been enabled", toName);

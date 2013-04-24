@@ -1,7 +1,8 @@
 var mongoose = require('mongoose')
   , DrinkOrder = mongoose.model('DrinkOrder')
   , getenv = require('getenv');
-var twilioEnabled = require('../services/twilio-service').twilioEnabled();
+var twilioEnabled = require('../services/twilio-service').twilioEnabled()
+  , emailEnabled = require('../services/email-service').emailEnabled();
 
 exports.drinkOrder = require('./drink-orders');
 exports.queue = require('./queue');
@@ -13,6 +14,7 @@ exports.customer = function(req, res){
   res.render('customer', {
     title: 'Grab Go Coffee - Customer View'
   , twilioEnabled: twilioEnabled
+  , emailEnabled: emailEnabled
   });
 };
 

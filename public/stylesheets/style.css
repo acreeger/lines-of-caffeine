@@ -101,7 +101,7 @@ a {
   text-align: right;
 }
 
-.sms-disabled-warning {
+.disabled-warnings {
   color: red;
   font-weight: bold;
   position: absolute;
