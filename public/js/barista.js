@@ -7,8 +7,6 @@ COFFEE.barista = (function($, ich, shared) {
   var unassignedBaristasCount;
   var orderStore = {};
 
-  //TODO: Life would be simpler if this just stored the id and not the object, then you could use the id to get the order from the store.
-  // This would mean that there would be only one source of truth.
   var baristas;
 
   var pollingHandler;
@@ -26,16 +24,16 @@ COFFEE.barista = (function($, ich, shared) {
   }
 
   function isBaristaWorkingThisOrder(baristaId, order) {
-    var orderForBarista = baristas[baristaId];
-    return orderForBarista && orderForBarista._id === order._id
+    var orderIdForBarista = baristas[baristaId];
+    return orderIdForBarista === order._id
   }
 
   function isBaristaBusy(baristaId, order) {
-    var orderForBarista = baristas[baristaId];
-    var baristaBusy = typeof orderForBarista !== "undefined" && orderForBarista !== null;
+    var orderIdForBarista = baristas[baristaId];
+    var baristaBusy = typeof orderIdForBarista !== "undefined" && orderIdForBarista !== null;
     var workingOnThisOrder = false;
-    if (orderForBarista && order) {
-      workingOnThisOrder = order._id === orderForBarista._id && order.assignee === baristaId;
+    if (orderIdForBarista && order) {
+      workingOnThisOrder = order._id === orderIdForBarista && order.assignee === baristaId;
     }
     return baristaBusy && !workingOnThisOrder;
   }
@@ -48,7 +46,7 @@ COFFEE.barista = (function($, ich, shared) {
     return result;
   }
 
-  //returns true if order was assigned
+  //returns baristaId if order was assigned
   function assignOrderToFirstAvailableBarista(order) {
     var availableBaristas = getAvailableBaristas();
     var result = null
@@ -61,9 +59,17 @@ COFFEE.barista = (function($, ich, shared) {
     return result;
   }
 
+  function _assignOrderToBarista(order, baristaId) {
+    baristas[baristaId] = order._id;
+  }
+
+  function _clearAssignedOrderFromBarista(baristaId) {
+    baristas[baristaId] = null;
+  }
+
   function assignOrderToBarista(order, baristaId) {
     if (isBaristaBusy(baristaId, order)) {
-      console.log("Warning: assignOrderToBarista: Cannot assign barista %d order '%s' as they already have order '%s'", baristaId, order._id, baristas[baristaId]._id);
+      console.log("Warning: assignOrderToBarista: Cannot assign barista %d order '%s' as they already have order '%s'", baristaId, order._id, baristas[baristaId]);
     } else {
       var cb = function(order) {
         updateOrderStore(order);
@@ -89,21 +95,20 @@ COFFEE.barista = (function($, ich, shared) {
       var baristaPreviouslyAvailable = !baristas[baristaId]
       if (baristaPreviouslyAvailable) {
         //HACK: Calling this out of callback so it gets set immediately
-        baristas[baristaId] = order;
+        _assignOrderToBarista(order, baristaId);
         unassignedBaristasCount--;
       }
 
       if (order.assignee !== baristaId) {
         $.post("/api/order/" + order._id + "/assign/" + baristaId, function(response) {
           order = response.data;
-          baristas[baristaId] = order; //already been done, but good to refresh
+          _assignOrderToBarista(order, baristaId); //already been done, but good to refresh
           cb(order)
         });
       } else {
-        console.log("assignOrderToBarista: order %s was already assigned to barista %s on the server, so not updating the server.", order._id, baristaId)
+        // console.log("assignOrderToBarista: order %s was already assigned to barista %s on the server, so not updating the server.", order._id, baristaId)
         var orderAsPreviouslyKnown = getOrderFromStore(order._id);
         if (baristaPreviouslyAvailable || (orderAsPreviouslyKnown && order.status !== orderAsPreviouslyKnown.status)) {
-          // baristas[baristaId] = order;
           cb(order);
         }
       }
@@ -111,11 +116,11 @@ COFFEE.barista = (function($, ich, shared) {
   }
 
   function clearAssignedOrderFromBarista(baristaId, cb) {
-    var order = baristas[baristaId]
-    if (order) {
-      baristas[baristaId] = null
+    var orderId = baristas[baristaId]
+    if (orderId) {
+      _clearAssignedOrderFromBarista(baristaId);
       unassignedBaristasCount++;
-      var $order = $("#order-" + order._id);
+      var $order = $("#order-" + orderId);
       $order.fadeOut(function() {
         $order.remove();
         if ($.type(cb) === "function") cb();
