@@ -40,7 +40,7 @@ DrinkOrder.find({status:"complete"}).sort('date').exec(function(err, orders) {
     var baristaOrderCounts = [0, 0];
 
     _.each(orders, function(order, i) {
-      var startDate = order.date;
+      var startDate = order.dateStarted;
       var endDate = order.dateCompleted;
       var assignee = order.assignee;
 
@@ -62,6 +62,7 @@ DrinkOrder.find({status:"complete"}).sort('date').exec(function(err, orders) {
       previousStartTimes[assignee] = startDate;
 
       var difference = endDate.getTime() - startDate.getTime();
+      console.log("endDate: %s, startDate: %s, difference:", endDate,startDate, difference);
 
       if (difference < DURATION_THRESHOLD_MAX && difference >= DURATION_THRESHOLD_MIN) {
         totalDuration += difference
