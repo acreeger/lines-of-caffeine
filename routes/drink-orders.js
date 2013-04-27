@@ -67,7 +67,6 @@ exports.request = function(req, res) {
     getInProductionOrders(ordersRequired, function(err, inProdOrders) {
       orders = orders.concat(inProdOrders);
       ordersRequired -= inProdOrders.length;
-
       //TODO: Iterate through a list instead of this - its a bit clumsy
       if (ordersRequired > 0) {
         getAssignedOrders(ordersRequired, function(err, assignedOrders) {

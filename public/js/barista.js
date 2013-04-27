@@ -6,6 +6,7 @@ COFFEE.barista = (function($, ich, shared) {
 
   var unassignedBaristasCount;
   var orderStore = {};
+
   var baristas;
 
   var pollingHandler;
@@ -18,13 +19,34 @@ COFFEE.barista = (function($, ich, shared) {
     return orderStore[id];
   }
 
+  function removeOrderFromStore(id) {
+    delete orderStore[id];
+  }
+
+  function visitOrderStore(cb) {
+    for(var key in orderStore) {
+      var value = orderStore[key];
+      if (typeof cb === "function") cb(key, value)
+    }
+  }
+
   function isBaristaValid(baristaId) {
     return baristaId < baristas.length;
   }
 
-  function isBaristaBusy(baristaId) {
-    var orderForBarista = baristas[baristaId];
-    return (typeof orderForBarista !== "undefined" && orderForBarista !== null)
+  function isBaristaWorkingThisOrder(baristaId, order) {
+    var orderIdForBarista = baristas[baristaId];
+    return orderIdForBarista === order._id
+  }
+
+  function isBaristaBusy(baristaId, order) {
+    var orderIdForBarista = baristas[baristaId];
+    var baristaBusy = typeof orderIdForBarista !== "undefined" && orderIdForBarista !== null;
+    var workingOnThisOrder = false;
+    if (orderIdForBarista && order) {
+      workingOnThisOrder = order._id === orderIdForBarista && order.assignee === baristaId;
+    }
+    return baristaBusy && !workingOnThisOrder;
   }
 
   function getAvailableBaristas() {
@@ -35,22 +57,30 @@ COFFEE.barista = (function($, ich, shared) {
     return result;
   }
 
-  //returns true if order was assigned
+  //returns baristaId if order was assigned
   function assignOrderToFirstAvailableBarista(order) {
     var availableBaristas = getAvailableBaristas();
-    var result = false
+    var result = null
     if (availableBaristas.length > 0) {
       var firstBaristaId = availableBaristas[0];
       // console.log("assignOrderToFirstAvailableBarista: assigning order %s to barista %d",order._id, firstBaristaId);
-      result = true;
+      result = firstBaristaId;
       assignOrderToBarista(order, firstBaristaId);
     }
     return result;
   }
 
+  function _assignOrderToBarista(order, baristaId) {
+    baristas[baristaId] = order._id;
+  }
+
+  function _clearAssignedOrderFromBarista(baristaId) {
+    baristas[baristaId] = null;
+  }
+
   function assignOrderToBarista(order, baristaId) {
-    if (baristas[baristaId]) {
-      console.log("Warning: assignOrderToBarista: Cannot assign barista %d order '%s' as they already have order '%s'", baristaId, order._id, baristas[baristaId]._id);
+    if (isBaristaBusy(baristaId, order)) {
+      console.log("Warning: assignOrderToBarista: Cannot assign barista %d order '%s' as they already have order '%s'", baristaId, order._id, baristas[baristaId]);
     } else {
       var cb = function(order) {
         updateOrderStore(order);
@@ -67,35 +97,42 @@ COFFEE.barista = (function($, ich, shared) {
         var $order = ich.orderTemplate(orderForTemplate);
         $order.hide();
         var $baristaContainer = $("#barista" + baristaId)
-        $baristaContainer.find(".orders").append($order)
+        $baristaContainer.find(".orders").empty().append($order);
         $baristaContainer.find(".no-orders").fadeOut(function (){
           $order.fadeIn(200)
         });
       }
-      //HACK: Calling this out of callback so it gets set immediately
-      baristas[baristaId] = order;
-      unassignedBaristasCount--;
+      //only decrement the unassignedBaristasCount if the barista was preivously available
+      var baristaPreviouslyAvailable = !baristas[baristaId]
+      if (baristaPreviouslyAvailable) {
+        //HACK: Calling this out of callback so it gets set immediately
+        _assignOrderToBarista(order, baristaId);
+        unassignedBaristasCount--;
+      }
 
       if (order.assignee !== baristaId) {
         $.post("/api/order/" + order._id + "/assign/" + baristaId, function(response) {
           order = response.data;
-          baristas[baristaId] = order; //already been done, but good to refresh
+          _assignOrderToBarista(order, baristaId); //already been done, but good to refresh
           cb(order)
         });
       } else {
-        console.log("assignOrderToBarista: order %s was already assigned to barista %s, not hitting the server.", order._id, baristaId)
-        cb(order);
+        // console.log("assignOrderToBarista: order %s was already assigned to barista %s on the server, so not updating the server.", order._id, baristaId)
+        var orderAsPreviouslyKnown = getOrderFromStore(order._id);
+        if (baristaPreviouslyAvailable || (orderAsPreviouslyKnown && order.status !== orderAsPreviouslyKnown.status)) {
+          cb(order);
+        }
       }
-
     }
   }
 
   function clearAssignedOrderFromBarista(baristaId, cb) {
-    var order = baristas[baristaId]
-    if (order) {
-      baristas[baristaId] = null
+    var orderId = baristas[baristaId]
+    if (orderId) {
+      _clearAssignedOrderFromBarista(baristaId);
+      removeOrderFromStore(orderId);
       unassignedBaristasCount++;
-      var $order = $("#order-" + order._id);
+      var $order = $("#order-" + orderId);
       $order.fadeOut(function() {
         $order.remove();
         if ($.type(cb) === "function") cb();
@@ -112,20 +149,35 @@ COFFEE.barista = (function($, ich, shared) {
     var action = $button.attr("data-action-type");
     var url = "/api/order/" + orderId + "/" + action
     $.post(url, function(response) {
-      updateOrderStore(response.data);
+      //HACK: I'm doing this because the order API is inconsistent with it's response format.
+      //TODO: Refactor API so orders are returned in an order property, not directly under the data.
+      //      That way the order that was acted upon is always returned in a  consistent manner.
+      if (response.data && response.data._id) updateOrderStore(response.data);
       if (cb && typeof cb === "function") cb(orderId, $order, response);
     })
   }
 
   var ASSIGNED_STATUSES = ["in-production","assigned"];
 
-  function getMoreOrders(numberOfBaristas, newOnly) {
-    var newOnly = newOnly || false;
-    $.get('/api/order/request', {count: numberOfBaristas, new_only: newOnly}, function(orders) {
+  function getMoreOrders(numberOfBaristas, partial) {
+    //TODO: Handle syncing screen when an order is removed
+    $.get('/api/order/request', {count: numberOfBaristas, new_only: false}, function(orders) {
       var ordersToBeAssigned = orders;
       var succesfullyAssignedOrders = []; //will populate as we assign
       var orderStatusMap = {};
-      //build the status map
+      var baristasAssigned = [];
+      var orderIds = $.map(orders, function(element) {return element._id})
+
+      if (!partial) {
+        visitOrderStore(function(orderId, order) {
+          if ($.inArray(orderId, orderIds) === -1) {
+            console.log("Order %s is no longer in orders returned from the server. Unassigning from barista %s", orderId, order.assignee);
+            clearAssignedOrderFromBarista(order.assignee);
+          }
+        });
+      }
+
+      //intialize the status map with empty arrays
       $.each(ASSIGNED_STATUSES, function() {orderStatusMap[this] = []});
       //populate the status map
       $.each(ordersToBeAssigned, function(i, order) {
@@ -140,8 +192,9 @@ COFFEE.barista = (function($, ich, shared) {
         $.each(ordersInState, function() {
           var assignee = this.assignee;
           //If they get assigned add them to the already assigned list.
-          if (isBaristaValid(assignee) && !isBaristaBusy(assignee)) {
+          if (isBaristaValid(assignee) && !isBaristaBusy(assignee, this)) {
             succesfullyAssignedOrders.push(this);
+            baristasAssigned.push(assignee);
             assignOrderToBarista(this, assignee);
           }
         })
@@ -152,7 +205,10 @@ COFFEE.barista = (function($, ich, shared) {
       //assignOrderToFirstAvailableBarista() relies upon unassignedBaristasCount being updated in real time.
       while(ordersToBeAssigned.length > 0) {
         var order = ordersToBeAssigned.splice(0,1)[0];
-        assignOrderToFirstAvailableBarista(order);
+        var newAssignee = assignOrderToFirstAvailableBarista(order);
+        if (newAssignee !== null) {
+          baristasAssigned.push(newAssignee);
+        }
       }
 
       //if there are any other barista
@@ -188,15 +244,14 @@ COFFEE.barista = (function($, ich, shared) {
   }
 
   function refreshOrders() {
-    if (unassignedBaristasCount > 0){
-      // console.log("refreshOrders: unassignedBaristasCount is non-zero:",unassignedBaristasCount)
-      //I wonder if there is a race condition here. What happens if this fires at the same time as "done" action
-      getMoreOrders(unassignedBaristasCount, true);
-    } else {
-      //let's update the count.
+    //I wonder if there is a race condition here. What happens if this fires at the same time as "done" action
+    try {
+      getMoreOrders(numberOfBaristas, false);
       getNewOrderCount(updateOrderCountFromServerResponse);
+    } catch (err) {
+      console.log("Received error when updating orders and queue summary:", JSON.stringify(err))
     }
-    pollingHandler = setTimeout(refreshOrders, 5000);
+    pollingHandler = setTimeout(refreshOrders, 30 * 1000); //CHANGE BACK TO 5s
   }
 
   var init = function(numBaristas) {
@@ -205,11 +260,7 @@ COFFEE.barista = (function($, ich, shared) {
     unassignedBaristasCount = numberOfBaristas;
     baristas = new Array(numberOfBaristas);
     $(function() {
-      getMoreOrders(numBaristas);
-
-      pollingHandler = setTimeout(refreshOrders, 5000);
-      getNewOrderCount(updateOrderCountFromServerResponse);
-
+      refreshOrders();
       var baristaDisabledButtonMap = {}
 
       $(".barista-container").on("click", ".order-action-buttons button", function(evt) {
