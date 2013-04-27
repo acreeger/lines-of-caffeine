@@ -251,7 +251,7 @@ COFFEE.barista = (function($, ich, shared) {
     } catch (err) {
       console.log("Received error when updating orders and queue summary:", JSON.stringify(err))
     }
-    pollingHandler = setTimeout(refreshOrders, 30 * 1000); //CHANGE BACK TO 5s
+    pollingHandler = setTimeout(refreshOrders, 5 * 1000); //CHANGE BACK TO 5s
   }
 
   var init = function(numBaristas) {
