@@ -244,16 +244,14 @@ COFFEE.barista = (function($, ich, shared) {
   }
 
   function refreshOrders() {
-    // if (unassignedBaristasCount > 0){
-      // console.log("refreshOrders: unassignedBaristasCount is non-zero:",unassignedBaristasCount)
-      //I wonder if there is a race condition here. What happens if this fires at the same time as "done" action
+    //I wonder if there is a race condition here. What happens if this fires at the same time as "done" action
+    try {
       getMoreOrders(numberOfBaristas, false);
-    // } else {
-      //let's update the count.
-      //TODO: Move this out.
       getNewOrderCount(updateOrderCountFromServerResponse);
-    // }
-    pollingHandler = setTimeout(refreshOrders, 5000);
+    } catch (err) {
+      console.log("Received error when updating orders and queue summary:", JSON.stringify(err))
+    }
+    pollingHandler = setTimeout(refreshOrders, 30 * 1000); //CHANGE BACK TO 5s
   }
 
   var init = function(numBaristas) {
@@ -262,11 +260,7 @@ COFFEE.barista = (function($, ich, shared) {
     unassignedBaristasCount = numberOfBaristas;
     baristas = new Array(numberOfBaristas);
     $(function() {
-      getMoreOrders(numBaristas, false);
-
-      pollingHandler = setTimeout(refreshOrders, 5000);
-      getNewOrderCount(updateOrderCountFromServerResponse);
-
+      refreshOrders();
       var baristaDisabledButtonMap = {}
 
       $(".barista-container").on("click", ".order-action-buttons button", function(evt) {
