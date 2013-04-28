@@ -67,6 +67,10 @@ app.post('/api/order/:id/assign/:assignee', routes.drinkOrder.assign);
 
 app.get('/api/queue/summary', routes.queue.summary);
 
+app.get('/testError', function(req,res,next) {
+  next(new Error("This is a test error!"));
+})
+
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
