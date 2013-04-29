@@ -20,24 +20,34 @@ exports.customer = function(req, res){
 
 exports.barista = function(req, res) {
   var numberOfBaristas = req.params.numberOfBaristas || 2 //DEFAULT IS 2
-	res.render('barista', {title: 'Grab Go Coffee - Barista View', numberOfBaristas: numberOfBaristas })
+  res.render('barista', {title: 'Grab Go Coffee - Barista View', numberOfBaristas: numberOfBaristas })
 };
 
+var DEFAULT_PAGE_SIZE = 200;
 exports.report = function(req, res) {
-	var key = req.query["key"] || ""
-	var password = getenv("REPORT_PW", "")
-	if(key !== password) {
-		res.send(403);
-	} else {
-		var criteria = {}
-		var limit = req.query["limit"] || 200;
-		var sort = req.query["sort"] || "-date";
-		var status = req.query["status"];
-		if (status) {
-			criteria["status"] = status
-		}
-	  DrinkOrder.find(criteria).limit(limit).sort(sort).exec(function (err, orders) {
-	  	res.render('report', {title: 'Grab Go Coffee - Order Report', orders: orders})
-	  });
-	}
+  var key = req.query["key"] || "";
+  var additionalArgsForPagination = {}
+  if (key !== "") additionalArgsForPagination.key = key;
+  var page = req.query["page"] || 1;
+  page = parseInt(page);
+  var pageSize = req.query["pageSize"] || DEFAULT_PAGE_SIZE
+  if (pageSize !== DEFAULT_PAGE_SIZE) additionalArgsForPagination.pageSize = pageSize;
+  pageSize = parseInt(pageSize);
+  var password = getenv("REPORT_PW", "");
+  if(key !== password) {
+    res.send(403);
+  } else {
+    var criteria = {}
+    var sort = req.query["sort"] || "-date";
+    var status = req.query["status"];
+    if (status) {
+      additionalArgsForPagination.status = status;
+      criteria["status"] = status;
+    }
+    DrinkOrder.find(criteria).sort(sort).skip((page - 1) * pageSize).limit(pageSize).exec(function (err, orders) {
+      DrinkOrder.count(criteria, function (err, count) {
+        res.render('report', {title: 'Grab Go Coffee - Order Report', orders: orders, pageSize: pageSize, page: page, totalCount: count, additionalArgsForPagination: additionalArgsForPagination})
+      });
+    });
+  }
 }

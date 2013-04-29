@@ -9,9 +9,12 @@ block content
       .span12
         h1 C.O.F.F.E.E
         h2 Overview
-        h4 Total Orders: #{orders.length}
+        h4 Total Orders: #{totalCount}
     .row
       .span12
+        mixin pagination
+          != paginate(totalCount, pageSize, page, {"add_args":additionalArgsForPagination})
+        mixin pagination
         table.table.table-bordered.report-table
           thead: tr
             th Name
@@ -53,6 +56,7 @@ block content
                     mixin orderRow(order)
                 default: tr
                     mixin orderRow(order)
+        mixin pagination
 
 
             
