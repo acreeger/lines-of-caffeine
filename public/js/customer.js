@@ -79,7 +79,7 @@ COFFEE.customer = (function($) {
       .fail(function(jqXHR, textStatus, errorThrown) {console.log("An error happened while getting the queue summary:", errorThrown)});
     }
 
-    var idleInterval = setInterval(updateWaitingTime, 7000);
+    var updateWaitingTimeInterval = setInterval(updateWaitingTime, 30 * 1000);
     updateWaitingTime();
 
     $(document).on("mousemove click keypress" ,function() {
