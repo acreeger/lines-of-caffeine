@@ -156,7 +156,7 @@ COFFEE.customer = (function($) {
           $("#order-success").one("show", function() {
             timeoutHandler = window.setTimeout(function() {
               $("#order-success").modal('hide')
-            }, 5000);
+            }, 2500);
           })
           .modal()
           .one("hide",function() {
