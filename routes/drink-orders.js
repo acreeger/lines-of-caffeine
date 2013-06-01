@@ -19,6 +19,8 @@ exports.create = function(req, res) {
       var status = (err instanceof CustomValidationError || typeof err.errors !== "undefined") ? 400 : 500
       if (status === 500) {
         console.log("Received unexpected error while saving order:",order, err);
+      } else {
+        console.log("Received validation error while saving order: %s: %s", order, err);
       }
       util.sendError(res, err, status);
     } else {
