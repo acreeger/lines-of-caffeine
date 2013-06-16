@@ -87,7 +87,7 @@ var init = function(connection) {
     //TODO: Need to normalize old phone-numbers (including existing records... Eek!)
     //TODO: normalize phone number (add in util)
     contactInfo = util.normalizeUSPhoneNumber(contactInfo);
-    this.find({$or : [{"customer.cellPhone" : contactInfo}, {"customer.emailAddress" : contactInfo}]}, null, {order: "-date", limit:limit}, cb)
+    this.find({$or : [{"customer.cellPhone" : contactInfo}, {"customer.emailAddress" : contactInfo}]}, null, {sort: {"date": -1}, limit:limit}, cb)
     // cb(null, [])
   }
 
