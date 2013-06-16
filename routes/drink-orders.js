@@ -101,7 +101,7 @@ function addPrefixToPhoneNumber(smsToNumber) {
 
 function sendOrderStartedTextMessage(order) {
   var smsToNumber = order.cellPhone
-  smsToNumber = addPrefixToPhoneNumber(smsToNumber)
+  smsToNumber = addPrefixToPhoneNumber(smsToNumber) //TODO: We can remove this once all old orders have been normalized.
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
   var smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
                                 order.customer.firstName
@@ -112,7 +112,7 @@ function sendOrderStartedTextMessage(order) {
 
 function sendOrderAbortedTextMessage(order) {
   var smsToNumber = order.cellPhone
-  smsToNumber = addPrefixToPhoneNumber(smsToNumber)
+  smsToNumber = addPrefixToPhoneNumber(smsToNumber)  //TODO: We can remove this once all old orders have been normalized.
   var smsMessage = _s.sprintf("Hi %s. Unfortunately there was a problem with your drink order. Please come see us to sort it out. Sorry about that!",
                                 order.customer.firstName
                               );
@@ -133,7 +133,6 @@ function sendOrderStartedEmailMessage(order) {
 }
 
 function sendOrderAbortedEmailMessage(order) {
-  //TODO:
   var emailAddress = order.emailAddress;
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
   var subject = _s.sprintf("Their was a problem with your drink order");
@@ -255,4 +254,25 @@ exports.assign = function(req, res) {
       res.json(404, {success:false,data:{error:"Order cannot be found: " + id}});
     }
   });
+}
+
+exports.searchByContact = function(req,res) {
+  var contact = req.param("contact");
+  if (!contact) util.sendError(res, "contact is a required parameter", 400);
+  else {
+    var limit = 1;
+    var paramLimit = req.param("limit");
+    if (paramLimit != null) {
+      limit = parseInt(paramLimit, 10);
+      if (isNaN(limit)) limit = 1
+      if (limit < 0) limit = 0;
+    }
+
+    DrinkOrder.getOrdersForUser(contact, limit, function(err, orders) {
+      if (err) util.sendError(res, err)
+      else {
+        res.json({success:true, data: orders});
+      }
+    });
+  }
 }

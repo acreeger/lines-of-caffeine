@@ -12,7 +12,7 @@ var express = require('express')
 
 var app = express();
 
-var mongoUri = process.env.MONGOLAB_URI || 'mongodb://localhost/caffeine_development';
+var mongoUri = process.env.MONGOLAB_URI || process.env.NODE_ENV === "test" ? 'mongodb://localhost/lines-of-caffeine-test' : 'mongodb://localhost/caffeine_development';
 
 mongoose.connect(mongoUri, function(err) {
   if (!err) {
@@ -26,7 +26,7 @@ mongoose.connect(mongoUri, function(err) {
 var models_path = __dirname + '/models'
 fs.readdirSync(models_path).forEach(function (file) {
   // console.log("Reading model",file)
-  require(models_path+'/'+file)
+  require(models_path+'/'+file)()
 })
 
 var routes = require('./routes')
@@ -55,6 +55,10 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
+app.configure("test", function() {
+  app.set('port', process.env.PORT || 6666);
+})
+
 app.get('/', routes.customer);
 app.get('/barista/:numberOfBaristas?',routes.barista);
 app.get('/report', routes.report);
@@ -65,6 +69,7 @@ app.post('/api/order/:id/start', routes.drinkOrder.start);
 app.post('/api/order/:id/complete', routes.drinkOrder.complete);
 app.post('/api/order/:id/abort', routes.drinkOrder.abort);
 app.post('/api/order/:id/assign/:assignee', routes.drinkOrder.assign);
+app.get('/api/order/searchByContact', routes.drinkOrder.searchByContact);
 
 app.get('/api/queue/summary', routes.queue.summary);
 
@@ -75,3 +80,5 @@ app.get('/testError', function(req,res,next) {
 http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server listening on port " + app.get('port'));
 });
+
+module.exports = app
