@@ -33,6 +33,10 @@ body {
   font-size: 50.5px;
 }
 
+.input-container #contact-info-prescreen::-webkit-input-placeholder {
+  font-size: 26px;
+}
+
 .btn-primary {
   background-image: -webkit-linear-gradient(rgb(11, 166, 187), #006AD8)
 }
