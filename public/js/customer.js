@@ -165,7 +165,8 @@ COFFEE.customer = (function($) {
       counterElement: 'div'
     });
 
-    $(".clear-special-instructions").on("click", function() {
+    $(".clear-special-instructions").on("click", function(evt) {
+      evt.preventDefault();
       $("#special-instructions textarea").val("").change();
     })
 
