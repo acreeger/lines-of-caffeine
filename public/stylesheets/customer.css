@@ -2,6 +2,109 @@ body {
 	padding-top: 50px;
 }
 
+.errorLabelRow {
+  min-height: 25px;
+  color: #b94a48;
+}
+
+.input-helper-text {
+  margin-top: 3px;
+  margin-bottom: 3px;
+  color:#aaa;
+}
+
+.order-row, .order-row select {
+  font-size: 26px;
+  height: 56px;
+  line-height: 56px;
+}
+
+.order-row select {
+  margin-top: -6px;
+}
+
+#order-container select {
+  width: 100%
+}
+
+#order-button {
+  margin-top: 60px;
+  padding: 30px 30px;
+  font-size: 50.5px;
+}
+
+.btn-primary {
+  background-image: -webkit-linear-gradient(rgb(11, 166, 187), #006AD8)
+}
+
+.btn-primary:hover {
+  background-color: #006AD8;
+}
+
+#order-container {
+  margin-top: 40px;
+}
+
+#first-time-question p:first-child {
+  font-size: 30px;
+  margin-top: 0;
+  color: #555;
+}
+
+#first-time-question p {
+  text-align: center;
+  color: #888;
+  font-size: 15.5px;
+}
+
+#or-row {
+  font-size: 20px;
+  font-style: italic;
+  color:#666;
+}
+
+#never-used-it-row {
+  margin-top: 20px;
+}
+
+.input-container input {
+  font-size: 30px;
+  height: 40px;
+  width: 100%;
+}
+
+.input-container input::-webkit-input-placeholder {
+  padding-top: 10px;
+}
+
+.input-container input.errorMessage {
+  border-color: #b94a48;
+/*  -webkit-box-shadow: 7px 7px 5px rgba(185, 74, 72, 0.75);
+  -moz-box-shadow:    7px 7px 5px rgba(185, 74, 72, 0.75);
+  box-shadow:         7px 7px 5px rgba(185, 74, 72, 0.75);*/
+  /*margin-top: 20px;*/
+}
+
+.input-container input.errorMessage:focus {
+  border-color: #953b39;
+  box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(185, 74, 72, 0.6) 0px 0px 8px 0px;
+}
+
+.input-container input.valid {
+  border-color: #468847;
+}
+
+.input-container input.valid:focus {
+  border-color: #356635;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px #7aba7b;
+}
+
+#contact-info-form {
+	margin-top: 50px;
+}
+
 .counter {
 	text-align: right;
 	padding-right: 31px;
@@ -26,8 +129,12 @@ body {
   text-align: center
 }
 
-.add-special-instructions {
-  margin-top:55px;
+#no-special-requests, #entered-special-requests {
+  margin-top: 55px;
+}
+
+#entered-special-requests button {
+  margin-left: 10px;
 }
 
 #top-right-buttons {
@@ -37,6 +144,11 @@ body {
 
 #top-right-buttons button {
 	color:#eee;
+}
+
+#next-button, #never-used-it-button {
+  height: 50px;
+  font-size: 25px;
 }
 
 .wait-length {

@@ -21,8 +21,44 @@ block content
       .span4.logo-row
         h1: img(src="images/AKQA_BLUEBOTTLE_logo.jpg",title="AKQA & Blue Bottle Coffee")
         //- h3.text-left Caffeine Ordering For Fast Employee Enjoyment
-    form#order-form.form-inline
-      #user-container
+    form#contact-info-form.form-inline
+      #contact-info-container.input-container
+        #first-time-question.row
+          .span6.offset3
+            p Used this app before?
+            p We'll automatically load your last order...
+        .row
+          .span5.offset3
+            input#contact-info-prescreen(type="text", name="contact-info-prescreen", placeholder="Please enter your cell or email...", autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="off")
+          .span1
+            button#next-button.btn.btn-primary Next
+        .row.errorLabelRow
+          .span5.offset3
+            label.errorMessage(for="contact-info-prescreen")
+        #or-row.row
+          .span6.offset3
+            div.align-center - or -
+        #never-used-it-row.row
+          .span6.offset3
+            div.align-center
+              button#never-used-it-button.btn I've never used it before
+            //- TODO: Add button for skipping this section or inputting phone number/email
+
+    form#order-form.form-inline.hide
+      #order-success.modal.hide.fade
+        .modal-header
+          h3 Thank you!
+        .modal-body
+          p We will contact you when it's time to come grab your drink.
+      #special-instructions.modal.hide.fade
+        .modal-header
+          h4 Add special requests here...
+        .modal-body
+          textarea#special-instructions-input(name="drinks[0][specialInstructions]",maxlength="110")
+        .modal-footer
+          button.clear-special-instructions.btn.btn-link.pull-left Clear
+          button.btn.btn-primary.btn(data-dismiss='modal', aria-hidden='true') Close
+      #user-container.input-container
         .row.errorLabelRow
           .span4
             label.errorMessage(for="cust-first-name")
@@ -40,24 +76,6 @@ block content
         .row
           .span4.offset8.hidden-phone.input-helper-text.align-right
             em ...we'll contact you when your drink is ready
-
-      #order-success.modal.hide.fade
-        .modal-header
-          h3 Thank you!
-        .modal-body
-          p We will text you when it's time to come grab your drink.
-        .modal-footer
-          button.btn.btn-primary.btn-large(data-dismiss='modal', aria-hidden='true') Close
-      #special-instructions.modal.hide.fade
-        .modal-header
-          h4 Add special requests here...
-        .modal-body
-          textarea(name="drinks[0][specialInstructions]",maxlength="110")
-        .modal-footer
-          button.clear-special-instructions.btn.btn-link.pull-left Clear
-          button.btn.btn-primary.btn(data-dismiss='modal', aria-hidden='true') Close
-          //- TODO: Add clear link
-
       #order-container
         .row
           .span12.input-helper-text.align-left
@@ -85,19 +103,13 @@ block content
               option(value="skim") with non-fat milk
               option(value="soy") with soy milk
               option(value="none") with no milk
-        //- .row.order-row
-        //-   .span12
-        //-     p with&nbsp;
-        //-       select.milk-type.input-medium(name="drinks[0][milk]")
-        //-         option(value="full-fat") full fat
-        //-         option(value="skim") skim
-        //-         option(value="soy") soy
-        //-         option(value="none") no
-        //-       | &nbsp;milk, please.
         .row
           .span12.align-center
             button#no-special-requests.add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Any special requests?
-            button#entered-special-requests.hide.add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Edit special requests
+            p#entered-special-requests.hide
+              strong Special requests:&nbsp;
+              span#special-instructions-text
+              button.add-special-instructions.btn(data-toggle="modal",data-target="#special-instructions") Edit
         .row
           .span12.align-center
             button#order-button.btn.btn-primary.btn-large Order

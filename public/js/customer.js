@@ -13,22 +13,36 @@ jQuery.validator.addMethod("phoneUS", function(phone_number, element) {
 var COFFEE = COFFEE || {};
 
 COFFEE.customer = (function($) {
-  var formValidator;
+  var formValidator, contactInfoFormValidator;
   var idleTimeMins = 0;
   var oldWaitingTime = -1;
   var LONG_WAIT_THRESHOLD = 15;
 
-  function resetForm() {
-    formValidator.resetForm();
-    $("#order-form").get(0).reset();
-    $(".modal").modal("hide");
-    $(".valid").removeClass("valid");
-    $("input.errorMessage").removeClass("errorMessage");
-    $(".order-row select").filter(":disabled").prop("disabled",false).fadeTo(100,1.0);
-    $("#special-instructions textarea").change();
-  }
-
   $(function() {
+
+    function resetForm() {
+      formValidator.resetForm();
+      contactInfoFormValidator.resetForm();
+      $contactInfoForm.get(0).reset();
+      $("#order-form").get(0).reset();
+      $(".modal").modal("hide");
+      $(".valid").removeClass("valid");
+      $("input.errorMessage").removeClass("errorMessage");
+      $(".order-row select").filter(":disabled").prop("disabled",false).fadeTo(100,1.0);
+      $("#special-instructions textarea").change();
+      $orderForm.hide();
+      $contactInfoForm.show();
+    }
+
+    var handleSpecialInstructions = function(specialInstructions) {
+      var hasSpecialInstructions = specialInstructions.length > 0;
+      if (hasSpecialInstructions) {
+        $("#special-instructions-input").val(specialInstructions);
+        $("#special-instructions-text").text(specialInstructions);
+      }
+      $("#no-special-requests").toggle(!hasSpecialInstructions);
+      $("#entered-special-requests").toggle(hasSpecialInstructions);
+    }
 
     var idleInterval = setInterval(function() {
       idleTimeMins++;
@@ -88,16 +102,36 @@ COFFEE.customer = (function($) {
     $(".reset-button").on("click", resetForm)
     $(".refresh-button").on("click", function() {window.location.reload()})
 
+    var $contactInfoForm = $("#contact-info-form")
     var $orderForm = $("#order-form");
 
-    var emailOrUSPhoneNumber = function(value, element) {
+    var $strengthSelect = $(".caff-level");
+    var $milkSelect = $(".milk-type");
+    var $coffeeTypeSelect =$(".coffee-type");
 
+    var emailOrUSPhoneNumber = function(value, element) {
       return this.optional(element)
         || $.validator.methods.email.call(this, value, element)
         || $.validator.methods.phoneUS.call(this, value, element)
     }
 
     $.validator.addMethod("emailOrUSPhoneNumber", emailOrUSPhoneNumber, "Please enter a valid email address or US phone number");
+
+    contactInfoFormValidator = $contactInfoForm.validate({
+      errorClass: "errorMessage",
+      messages: {
+        "contact-info-prescreen" : {
+          "required" : "We'll need this to look up your last order...",
+          "emailOrUSPhoneNumber" : "Sure this is a valid email or US cell number?"
+        }
+      },
+      rules :{
+        "contact-info-prescreen" : {
+          required: true,
+          emailOrUSPhoneNumber: true}
+      },
+      ignoreTitle: true
+    });
 
     formValidator = $orderForm.validate({
       errorClass: "errorMessage",
@@ -121,13 +155,7 @@ COFFEE.customer = (function($) {
     $("#special-instructions").on("shown", function() {
       $("#special-instructions textarea").focus();
     }).find("textarea").on("change", function() {
-      if ($.trim($(this).val()) !== "") {
-        $("#no-special-requests").hide();
-        $("#entered-special-requests").show();
-      } else {
-        $("#no-special-requests").show();
-        $("#entered-special-requests").hide();
-      }
+      handleSpecialInstructions($.trim($(this).val()))
     }).charCount({
       allowed: 110,
       warning: 20,
@@ -141,15 +169,62 @@ COFFEE.customer = (function($) {
       $("#special-instructions textarea").val("").change();
     })
 
+    var hideContactInfoFormAndShowOrderForm = function(cb) {
+      cb = cb || function() {};
+      $contactInfoForm.fadeOut(function(){
+        $orderForm.fadeIn(function() {
+          cb();
+        });
+      });
+    }
+
+    $("#never-used-it-button").click(function(evt) {
+      evt.preventDefault();
+      hideContactInfoFormAndShowOrderForm();
+    });
+
+    $("#next-button").click(function(evt) {
+      evt.preventDefault();
+      if ($contactInfoForm.valid()) {
+        var $button = $(this).prop("disabled", true);
+        var contactInfo = $("#contact-info-prescreen").val();
+        var reenableButton = function() {$button.prop("disabled", false);}
+        $.get("/api/order/searchByContact?contact=" + encodeURIComponent(contactInfo)).done(function(result) {
+          console.log("Got data from searchByContact(%s):",contactInfo, result);
+          if (result.data.length == 0) {
+            alert("Hmm, we couldn't find your previous order.\n\nYou'll have to enter your order in from scratch. Sorry!");
+          } else {
+            var lastOrder = result.data[0];
+            $("#cust-first-name").val(lastOrder.customer.firstName);
+            $("#cust-last-name").val(lastOrder.customer.lastName);
+
+            var drink = lastOrder.drinks[0];
+            $strengthSelect.val(drink.strength);
+            $milkSelect.val(drink.milk);
+            $coffeeTypeSelect.val(drink.drinkType);
+            handleSpecialInstructions(drink.specialInstructions);
+          }
+          $("#contact-info").val(contactInfo);
+          hideContactInfoFormAndShowOrderForm(reenableButton);
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+          console.log("An error happened while looking up order by contactInfo:", contactInfo, errorThrown)
+          alert("Ruh-roh, Raggy! Something went wrong when looking up your order.\n\nYou'll have to enter your order in from scratch. Sorry!");
+          $("#contact-info").val(contactInfo);
+          hideContactInfoFormAndShowOrderForm(reenableButton);
+        });
+
+      }
+    });
+
     $("#order-button").click(function(evt) {
       evt.preventDefault();
       if ($orderForm.valid()) {
-        $button = $(this).prop("disabled", true);
+        var $button = $(this).prop("disabled", true);
         var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
         var serializedForm = $('#order-form').serializeObject();
         serializedForm.estimatedCompletionWait = oldWaitingTime;
         $disabledElems.prop("disabled", true);
-        var jqxhr = $.post('/api/order',serializedForm).done(function(data) {
+        $.post('/api/order',serializedForm).done(function(data) {
           console.log("Success! Got data", data);
           var timeoutHandler
           $("#order-success").one("show", function() {
@@ -161,12 +236,8 @@ COFFEE.customer = (function($) {
           .one("hide",function() {
             window.clearTimeout(timeoutHandler);
             $button.prop("disabled", false);
-            $(".valid").removeClass("valid");
-            formValidator.resetForm();
-            $("#order-form").get(0).reset();
-            $disabledElems.prop("disabled",false).fadeTo(100,1.0);
+            resetForm();
           });
-          //IDEA: Inlcude chance to edit phone number in modal?
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
           console.log("An error happened while creating order:",serializedForm, errorThrown)
@@ -175,8 +246,6 @@ COFFEE.customer = (function($) {
         });
       }
     });
-    var $strengthSelect = $(".caff-level");
-    var $milkSelect = $(".milk-type");
 
     $(".coffee-type").change(function () {
       var $this = $(this);

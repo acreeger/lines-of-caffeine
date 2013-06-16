@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node app",
-    "test": "mocha --recursive"
+    "test" : "NODE_ENV=test mocha --recursive --reporter spec --growl",
+    "watch" : "NODE_ENV=test mocha --growl --watch --recursive --reporter spec"
   },
   "engines": {
     "node": "0.8.x",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "mocha" : "*",
-    "should" : "*"
+    "should" : "*",
+    "supertest" : "0.7.x"
   }
 }
