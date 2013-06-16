@@ -25,7 +25,11 @@ block content
             th Order Id
           mixin orderRow(order)
             td #{order.customer.firstName} #{order.customer.lastName}
-            td #{order.contactInfo}
+            td
+              if (order.hasValidEmailAddress())
+                a(href="mailto:#{order.contactInfo}", target="blank") #{order.contactInfo}
+              else
+                span #{order.contactInfo}
             td #{order.status}
               if (order.status === "assigned" || order.status === "in-production")
                 span &nbsp;(#{order.assignee + 1}) 
