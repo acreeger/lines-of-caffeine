@@ -203,7 +203,6 @@ COFFEE.customer = (function($) {
             $milkSelect.val(drink.milk);
             $coffeeTypeSelect.val(drink.drinkType);
             handleSpecialInstructions(drink.specialInstructions);
-            //TODO: Normalize all phone numbers on previous orders
           }
           $("#contact-info").val(contactInfo);
           hideContactInfoFormAndShowOrderForm(reenableButton);
