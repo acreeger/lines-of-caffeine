@@ -13,7 +13,7 @@ var express = require('express')
 var app = express();
 
 var mongoUri = process.env.MONGOLAB_URI || process.env.NODE_ENV === "test" ? 'mongodb://localhost/lines-of-caffeine-test' : 'mongodb://localhost/caffeine_development';
-
+console.log("******** mongoUri:",mongoUri);
 mongoose.connect(mongoUri, function(err) {
   if (!err) {
     console.log('connected to MongoDB');
