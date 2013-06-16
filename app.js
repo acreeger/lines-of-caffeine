@@ -8,11 +8,12 @@ var express = require('express')
   , http = require('http')
   , path = require('path')
   , mongoose = require('mongoose')
-  , constants = require(__dirname + '/common/constants');
+  , constants = require(__dirname + '/common/constants')
+  , getenv = require('getenv');
 
 var app = express();
 
-var mongoUri = process.env.MONGOLAB_URI || process.env.NODE_ENV === "test" ? 'mongodb://localhost/lines-of-caffeine-test' : 'mongodb://localhost/caffeine_development';
+var mongoUri = getenv("MONGOLAB_URI", process.env.NODE_ENV === "test" ? 'mongodb://localhost/lines-of-caffeine-test' : 'mongodb://localhost/caffeine_development');
 console.log("******** mongoUri:",mongoUri);
 mongoose.connect(mongoUri, function(err) {
   if (!err) {
