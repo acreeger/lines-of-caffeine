@@ -20,7 +20,7 @@ block content
             th Name
             th Contact Info
             th Status
-            th Drink (raw)
+            th Drink
             th Date
             th Order Id
           mixin orderRow(order)
@@ -30,7 +30,7 @@ block content
               if (order.status === "assigned" || order.status === "in-production")
                 span &nbsp;(#{order.assignee + 1}) 
             - var drink = order.drinks[0]
-            td #{drink.strength} #{drink.drinkType} #{drink.milk} milk
+            td #{strengthTypes[drink.strength]} #{drinkTypes[drink.drinkType]} with #{milkTypes[drink.milk]} milk
               - var shortInstructions = drink.specialInstructions
               - var limit = 30
               if drink.specialInstructions
