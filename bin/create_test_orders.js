@@ -8,7 +8,7 @@ var mongoUri = 'mongodb://localhost/caffeine_development';
 var models_path = __dirname + '/../models'
 fs.readdirSync(models_path).forEach(function (file) {
   // console.log("Reading model",file)
-  require(models_path+'/'+file)
+  require(models_path+'/'+file)();
 })
 
 var DrinkOrder = mongoose.model('DrinkOrder')

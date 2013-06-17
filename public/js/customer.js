@@ -59,37 +59,42 @@ COFFEE.customer = (function($) {
       }
     }, 60000);
 
-    var hideVisibleWaitInfo = function() {
+    var hideVisibleWaitInfos = function() {
       $(".wait-info").filter(":visible").hide();
+    }
+
+    var showOrHideWaitingTimeCaution = function(waitingTime) {
+      if (waitingTime > LONG_WAIT_THRESHOLD) {
+        $("#long-wait-caution").fadeIn()
+      } else {
+        $("#long-wait-caution").fadeOut()
+      }
     }
 
     var updateWaitingTime = function() {
       $.get("/api/queue/summary", function(response){
         var waitingTime = response.data.waitingTime;
         if (waitingTime === 0 && oldWaitingTime !== 0) {
-          hideVisibleWaitInfo();
+          hideVisibleWaitInfos();
           $(".no-wait").show();
         } else if (waitingTime === 1 && oldWaitingTime !== 1) {
-          hideVisibleWaitInfo();
+          hideVisibleWaitInfos();
           $(".one-minute-wait").show();
         } else if (waitingTime > 1) {
           if (oldWaitingTime <= 1) {
-            hideVisibleWaitInfo();
+            hideVisibleWaitInfos();
             $(".wait-length").text(waitingTime);
             $(".minutes-wait").show();
+            showOrHideWaitingTimeCaution(waitingTime);
           } else if(oldWaitingTime !== waitingTime) {
             //just switch out the numbers
             var $waitLengthHolder = $(".wait-length")
             $waitLengthHolder.fadeOut(function (){
               $waitLengthHolder.text(waitingTime);
               $waitLengthHolder.fadeIn(function() {
-                if (waitingTime > LONG_WAIT_THRESHOLD) {
-                  $("#long-wait-caution").fadeIn()
-                } else {
-                  $("#long-wait-caution").fadeOut()
-                }
               });
-            })
+            });
+            showOrHideWaitingTimeCaution(waitingTime);
           }
         }
         oldWaitingTime = waitingTime;
@@ -258,6 +263,7 @@ COFFEE.customer = (function($) {
             $button.prop("disabled", false);
             resetForm();
           });
+          updateWaitingTime();
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
           console.log("An error happened while creating order:",serializedForm, errorThrown)
