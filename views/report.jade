@@ -28,6 +28,8 @@ block content
             td
               if (order.hasValidEmailAddress())
                 a(href="mailto:#{order.contactInfo}", target="blank") #{order.contactInfo}
+              else if (order.hasValidCellPhone())
+                span.phoneNumber #{order.contactInfo}
               else
                 span #{order.contactInfo}
             td #{order.status}
@@ -62,11 +64,6 @@ block content
                     mixin orderRow(order)
         mixin pagination
 
-
-            
-
 block late-scripts
-  //- script(src="/js/ICanHaz.min.js")
-  //- script(src="/js/barista.js")
-  //- script
-  //-   COFFEE.barista.init(#{numberOfBaristas});
+  script.
+    $(".phoneNumber").renderUSPhoneNumber();
