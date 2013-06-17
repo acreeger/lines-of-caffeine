@@ -1,6 +1,7 @@
 var mongoose = require('mongoose')
   , DrinkOrder = mongoose.model('DrinkOrder')
-  , getenv = require('getenv');
+  , getenv = require('getenv')
+  , moment = require('moment');
 var twilioEnabled = require('../services/twilio-service').twilioEnabled()
   , emailEnabled = require('../services/email-service').emailEnabled();
 
@@ -46,7 +47,10 @@ exports.report = function(req, res) {
     }
     DrinkOrder.find(criteria).sort(sort).skip((page - 1) * pageSize).limit(pageSize).exec(function (err, orders) {
       DrinkOrder.count(criteria, function (err, count) {
-        res.render('report', {title: 'Grab Go Coffee - Order Report', orders: orders, pageSize: pageSize, page: page, totalCount: count, additionalArgsForPagination: additionalArgsForPagination})
+        criteria.date = {$gt : moment().startOf('day')}
+        DrinkOrder.count(criteria, function(err, todayCount) {
+          res.render('report', {title: 'Grab Go Coffee - Order Report', orders: orders, pageSize: pageSize, page: page, totalCount: count, todayCount: todayCount, additionalArgsForPagination: additionalArgsForPagination})
+        });
       });
     });
   }
