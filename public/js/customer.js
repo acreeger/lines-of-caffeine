@@ -165,9 +165,10 @@ COFFEE.customer = (function($) {
 
     $("#contact-info").on("keyup", function() {
       var val = $(this).val();
+      var wasValid = stateBag.wasValid;
       var isValidPhoneNumber = validateUSPhone(val);
-      //TODO: Don't blur if it was previously valid too.
-      if (isValidPhoneNumber) this.blur();
+      stateBag.wasValid = isValidPhoneNumber;
+      if (!wasValid && isValidPhoneNumber) this.blur();
     });
 
     $("#special-instructions").on("shown", function() {
