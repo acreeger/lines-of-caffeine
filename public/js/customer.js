@@ -55,6 +55,7 @@ COFFEE.customer = (function($) {
       if (idleTimeMins > 1) { // Actually 2 mins
           idleTimeMins = 0;
           console.log("Resetting form due to inactivity");
+          COFFEE.shared.trackEvent("Miscellaneous", "Reset", "Inactivity");
           resetForm();
       }
     }, 60000);
@@ -109,8 +110,14 @@ COFFEE.customer = (function($) {
       idleTimeMins = 0;
     });
 
-    $(".reset-button").on("click", resetForm)
-    $(".refresh-button").on("click", function() {window.location.reload()})
+    $(".reset-button").on("click", function() {
+      COFFEE.shared.trackEvent("Miscellaneous", "Reset", "Button clicked");
+      resetForm();
+    });
+    $(".refresh-button").on("click", function() {
+      COFFEE.shared.trackEvent("Miscellaneous", "Refresh", "Button clicked");
+      window.location.reload()
+    });
 
     var $contactInfoForm = $("#contact-info-form")
     var $orderForm = $("#order-form");
@@ -250,10 +257,12 @@ COFFEE.customer = (function($) {
       if ($orderForm.valid()) {
         var $button = $(this).prop("disabled", true);
         var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
+        var drinkType = $(".coffee-type option:selected").text();
         var serializedForm = $('#order-form').serializeObject();
         serializedForm.estimatedCompletionWait = oldWaitingTime;
         $disabledElems.prop("disabled", true);
         $.post('/api/order',serializedForm).done(function(data) {
+          COFFEE.shared.trackEvent("Order placed","Success", drinkType);
           console.log("Success! Got data", data);
           var timeoutHandler
           $("#order-success").one("show", function() {
@@ -270,6 +279,7 @@ COFFEE.customer = (function($) {
           updateWaitingTime();
         })
         .fail(function(jqXHR, textStatus, errorThrown) {
+          COFFEE.shared.trackEvent("Order placed", "Failure", textStatus);
           console.log("An error happened while creating order:",serializedForm, errorThrown)
           alert("Ruh-roh, Raggy! Something went wrong when placing your order. Please try again!");
           $button.prop("disabled", false);
