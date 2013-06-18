@@ -15,15 +15,15 @@ Array.prototype.diff = function(a) {
     return this.filter(function(i) {return !(a.indexOf(i) > -1);});
 };
 
-COFFEE.initShared = function(drinkTypes, strengthTypes, milkTypes, isProduction) {
+COFFEE.initShared = function(drinkTypes, strengthTypes, milkTypes, doTracking) {
   var DRINK_TYPES = drinkTypes;
   var STRENGTH_TYPES = strengthTypes;
   var MILK_TYPES = milkTypes;
 
-  var isProduction = isProduction;
+  var doTracking = doTracking;
 
   function trackEvent(category,action,label) {
-    if (isProduction && ga) {
+    if (doTracking && ga) {
       if (label) {
         ga('send', 'event', category, action, label);
       } else {
@@ -31,6 +31,8 @@ COFFEE.initShared = function(drinkTypes, strengthTypes, milkTypes, isProduction)
       }
     }
   }
+
+  console.log("COFFEE.shared: Tracking enabled:", doTracking);
 
   return {
     DRINK_TYPES : DRINK_TYPES

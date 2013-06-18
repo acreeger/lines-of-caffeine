@@ -49,6 +49,7 @@ app.configure(function(){
     res.locals.EMAIL_VALIDATION_REGEX = constants.EMAIL_VALIDATION_REGEX;
     res.locals.paginate = require('./common/pagination').paginate
     res.locals.isProduction = getenv("NODE_ENV", "development") === "production"
+    res.locals.trackingId = process.env.TRACKING_ID
     next();
   });
   app.use(express.bodyParser());

@@ -258,11 +258,17 @@ COFFEE.customer = (function($) {
         var $button = $(this).prop("disabled", true);
         var $disabledElems = $(".order-row select").filter(":disabled").prop("disabled",false);
         var drinkType = $(".coffee-type option:selected").text();
+        var milkType = $(".milk-type option:selected").text();
+        var strength = $(".caff-level option:selected").text();
         var serializedForm = $('#order-form').serializeObject();
         serializedForm.estimatedCompletionWait = oldWaitingTime;
         $disabledElems.prop("disabled", true);
         $.post('/api/order',serializedForm).done(function(data) {
-          COFFEE.shared.trackEvent("Order placed","Success", drinkType);
+          COFFEE.shared.trackEvent("Order placed", "Success");
+          COFFEE.shared.trackEvent("Drink", "Drink Type", drinkType);
+          COFFEE.shared.trackEvent("Drink", "Milk Type", milkType);
+          COFFEE.shared.trackEvent("Drink", "Strength", strength);
+          COFFEE.shared.trackEvent("Drink", "Full drink description", strength + " " + drinkType + " " + milkType);
           console.log("Success! Got data", data);
           var timeoutHandler
           $("#order-success").one("show", function() {
