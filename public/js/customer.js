@@ -205,6 +205,7 @@ COFFEE.customer = (function($) {
 
     $("#never-used-it-button").click(function(evt) {
       evt.preventDefault();
+      COFFEE.shared.trackEvent('Pre-screen', 'Never used app before');
       hideContactInfoFormAndShowOrderForm();
     });
 
@@ -217,9 +218,11 @@ COFFEE.customer = (function($) {
         $.get("/api/order/searchByContact?contact=" + encodeURIComponent(contactInfo)).done(function(result) {
           console.log("Got data from searchByContact(%s):",contactInfo, result);
           if (result.data.length == 0) {
+            COFFEE.shared.trackEvent('Pre-screen', 'Contact Info Entered', 'No order found');
             alert("Hmm, we couldn't find your previous order.\n\nYou'll have to enter your order in from scratch. Sorry!");
           } else {
             var lastOrder = result.data[0];
+            COFFEE.shared.trackEvent('Pre-screen', 'Contact Info Entered', 'Order found');
             $("#cust-first-name").val(lastOrder.customer.firstName);
             $("#cust-last-name").val(lastOrder.customer.lastName);
 
@@ -232,6 +235,7 @@ COFFEE.customer = (function($) {
           $("#contact-info").val(contactInfo);
           hideContactInfoFormAndShowOrderForm(reenableButton);
         }).fail(function(jqXHR, textStatus, errorThrown) {
+          COFFEE.shared.trackEvent('Pre-screen', 'Contact Info Entered', 'Error occured');
           console.log("An error happened while looking up order by contactInfo:", contactInfo, errorThrown)
           alert("Ruh-roh, Raggy! Something went wrong when looking up your order.\n\nYou'll have to enter your order in from scratch. Sorry!");
           $("#contact-info").val(contactInfo);

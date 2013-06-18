@@ -48,6 +48,7 @@ app.configure(function(){
     res.locals.milkTypes = constants.milkTypes;
     res.locals.EMAIL_VALIDATION_REGEX = constants.EMAIL_VALIDATION_REGEX;
     res.locals.paginate = require('./common/pagination').paginate
+    res.locals.isProduction = getenv("NODE_ENV", "development") === "production"
     next();
   });
   app.use(express.bodyParser());
