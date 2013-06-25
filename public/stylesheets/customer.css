@@ -145,6 +145,16 @@ body {
 	margin-top: -50px;
 }
 
+.advert {
+  font-size: 30px;
+  text-align: center;
+  margin-top: 50px;
+}
+
+.advert div {
+  background-color: khaki;
+  border-radius: 10px;
+}
 
 #top-right-buttons button {
 	color:#eee;
