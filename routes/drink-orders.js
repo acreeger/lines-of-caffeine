@@ -103,7 +103,7 @@ function sendOrderStartedTextMessage(order) {
   var smsToNumber = order.cellPhone
   smsToNumber = addPrefixToPhoneNumber(smsToNumber) //TODO: We can remove this once all old orders have been normalized.
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-  var smsMessage = _s.sprintf("Hi! Your drink will be ready soon. Want even more inspiration than you get from a coffee? Come to the AKQA Make-a-thon kickoff party tonight at Alchemist! <3",
+  var smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
                                 order.customer.firstName
                               , drinkType
                               );
@@ -125,7 +125,7 @@ function sendOrderStartedEmailMessage(order) {
   var emailAddress = order.emailAddress;
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
   var subject = _s.sprintf("Your %s will be ready soon - come get it!", drinkType);
-  var body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nWant even more inspiration than you can get from a cup of coffee? Come to the AKQA Make-a-thon kickoff party tonight, 6pm at Alchemist Bar and Lounge!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
+  var body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
                               order.customer.firstName
                             , drinkType
                             );
