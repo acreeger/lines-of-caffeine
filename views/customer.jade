@@ -1,9 +1,10 @@
 extends layout
 block head
   link(rel='stylesheet', media='screen', href='/stylesheets/customer.css')
+  link(rel='stylesheet', media='(max-width: 480px)', href='/stylesheets/customer.480w.css')
 
 block content
-  .disabled-warnings
+  .disabled-warnings.hidden-phone
     if (!twilioEnabled)
       p Text messaging functionality has been disabled.
     if (!emailEnabled)
@@ -30,11 +31,10 @@ block content
         .row
           .span5.offset3
             input#contact-info-prescreen(type="text", name="contact-info-prescreen", placeholder="Please enter your cell or email...", autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="off")
-          .span1
+            .errorLabelRow
+              label.errorMessage(for="contact-info-prescreen")
+          .span1#next-button-container
             button#next-button.btn.btn-primary Next
-        .row.errorLabelRow
-          .span5.offset3
-            label.errorMessage(for="contact-info-prescreen")
         #or-row.row
           .span6.offset3
             div.align-center - or -

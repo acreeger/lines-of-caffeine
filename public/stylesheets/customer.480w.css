@@ -1,0 +1,56 @@
+body {
+  padding-top: 5px;
+}
+
+.logo-row img {
+  width: 60%;
+}
+
+#first-time-question p:first-child {
+  font-size: 20px;
+}
+
+#first-time-question p {
+  font-size: 12px;
+}
+
+#contact-info-form {
+  margin-top: 10px;
+}
+
+.input-container input {
+  font-size: 20px;
+  height: 30px;
+  width: 100%;
+}
+
+.input-container #contact-info-prescreen::-webkit-input-placeholder {
+  font-size: 16px;
+}
+
+.input-container input::-webkit-input-placeholder {
+  padding-top: 2px;
+}
+
+#next-button, #never-used-it-button {
+  height: 45px;
+  font-size: 20px;
+}
+
+#next-button-container {
+  margin-top: 2px;
+  text-align: center;
+}
+
+#or-row {
+  margin-top: 10px;
+  font-size: 16px;
+  font-style: italic;
+  color:#666;
+}
+
+#never-used-it-row {
+  margin-top: 12px;
+}
+
+
