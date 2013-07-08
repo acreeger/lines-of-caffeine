@@ -2,6 +2,7 @@ extends layout
 block head
   link(rel='stylesheet', media='screen', href='/stylesheets/customer.css')
   link(rel='stylesheet', media='(max-width: 480px)', href='/stylesheets/customer.480w.css')
+    //- could use max-device-width?
 
 block content
   .disabled-warnings.hidden-phone
@@ -63,27 +64,40 @@ block content
           button.clear-special-instructions.btn.btn-link.pull-left Clear
           button.btn.btn-primary.btn(data-dismiss='modal', aria-hidden='true') Close
       #user-container.input-container
-        .row.errorLabelRow
-          .span4
-            label.errorMessage(for="cust-first-name")
-          .span4
-            label.errorMessage(for="cust-last-name")
-          .span4
-            label.errorMessage(for="contact-info")
+        .row.visible-phone
+          .span1
+            .input-helper-text
+              em About you
         .row
           .span4
+            .errorLabelRow.hidden-phone
+              label.errorMessage(for="cust-first-name")
             input#cust-first-name.required.customer-data(type="text", placeholder="Your first name...", name="customer[firstName]", autocomplete="off", autocorrect="off", spellcheck="off")
+            .errorLabelRow.visible-phone
+              label.errorMessage(for="cust-first-name")
           .span4
+            .errorLabelRow.hidden-phone
+              label.errorMessage(for="cust-last-name")
             input#cust-last-name.required.customer-data(type="text", placeholder="Your last name...", name="customer[lastName]", autocomplete="off", autocorrect="off",spellcheck="off")
+            .errorLabelRow.visible-phone
+              label.errorMessage(for="cust-last-name")
           .span4
-            input#contact-info.span4.customer-data(type="text", placeholder="Cell or email...", name="customer[contactInfo]", autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="off")
+            .errorLabelRow.hidden-phone
+              label.errorMessage(for="contact-info")
+            input#contact-info.customer-data(type="text", placeholder="Cell or email...", name="customer[contactInfo]", autocapitalize="off", autocomplete="off", autocorrect="off", spellcheck="off")
+            .errorLabelRow.visible-phone
+              label.errorMessage(for="contact-info")
         .row
           .span4.offset8.hidden-phone.input-helper-text.align-right
             em ...we'll contact you when your drink is ready
+        .row.visible-phone
+          .span1.align-right
+            button#show-order-container-button.btn.btn-primary Next
+
       #order-container
         .row
           .span12.input-helper-text.align-left
-            em I would like a...
+            em.input-helper-text I would like a...
         .row.order-row
           .span4
             select.caff-level.input-large(name="drinks[0][strength]")
@@ -107,6 +121,7 @@ block content
               option(value="skim") with non-fat milk
               option(value="soy") with soy milk
               option(value="none") with no milk
+      #final-container
         .row
           .span12.align-center
             button#no-special-requests.add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Any special requests?

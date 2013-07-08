@@ -22,7 +22,11 @@ body {
   color:#aaa;
 }
 
-.order-row, .order-row select {
+.order-row {
+  margin-top: 5px;
+}
+
+/*.order-row, */.order-row select {
   font-size: 26px;
   height: 56px;
   line-height: 56px;

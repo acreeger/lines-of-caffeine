@@ -21,7 +21,7 @@ body {
 .input-container input {
   font-size: 20px;
   height: 30px;
-  width: 100%;
+  width: 97%;
 }
 
 .input-container #contact-info-prescreen::-webkit-input-placeholder {
@@ -32,7 +32,15 @@ body {
   padding-top: 2px;
 }
 
-#next-button, #never-used-it-button {
+#next-button, #never-used-it-button, #show-order-container-button {
+  height: 45px;
+  font-size: 20px;
+}
+
+#order-button {
+  margin-top: 10px;
+  /*padding: 30px 30px;*/
+  padding: 11px 19px;
   height: 45px;
   font-size: 20px;
 }
@@ -40,6 +48,20 @@ body {
 #next-button-container {
   margin-top: 2px;
   text-align: center;
+}
+
+.order-row select {
+  font-size: 20px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.order-row select {
+  margin-top: 20px;
+}
+
+select.caff-level {
+  margin-top: 0
 }
 
 #or-row {
@@ -51,6 +73,10 @@ body {
 
 #never-used-it-row {
   margin-top: 12px;
+}
+
+#order-container {
+  margin-top: 100px;
 }
 
 

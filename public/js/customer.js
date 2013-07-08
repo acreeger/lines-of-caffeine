@@ -3,7 +3,16 @@
 j.replace(a,""),b=h.build([],h.push_counter(j),b)):n.test(a)?b=h.build([],a,b):p.test(a)&&(b=h.build({},a,b));return g=f.extend(!0,g,b)}});return g}})(jQuery);
 
 //charCount
-(function(e){e.fn.charCount=function(t){function r(n){var r=e(n).val().length;var i=t.allowed-r;if(i<=t.warning&&i>=0){e(n).next().addClass(t.cssWarning)}else{e(n).next().removeClass(t.cssWarning)}if(i<0){e(n).next().addClass(t.cssExceeded)}else{e(n).next().removeClass(t.cssExceeded)}e(n).next().html(t.counterText+i)}var n={allowed:140,warning:25,css:"counter",counterElement:"span",cssWarning:"warning",cssExceeded:"exceeded",counterText:""};var t=e.extend(n,t);this.each(function(){e(this).after("<"+t.counterElement+' class="'+t.css+'">'+t.counterText+"</"+t.counterElement+">");r(this);e(this).keyup(function(){r(this)});e(this).change(function(){r(this)})})}})(jQuery)
+(function(e){e.fn.charCount=function(t){function r(n){var r=e(n).val().length;var i=t.allowed-r;if(i<=t.warning&&i>=0){e(n).next().addClass(t.cssWarning)}else{e(n).next().removeClass(t.cssWarning)}if(i<0){e(n).next().addClass(t.cssExceeded)}else{e(n).next().removeClass(t.cssExceeded)}e(n).next().html(t.counterText+i)}var n={allowed:140,warning:25,css:"counter",counterElement:"span",cssWarning:"warning",cssExceeded:"exceeded",counterText:""};var t=e.extend(n,t);this.each(function(){e(this).after("<"+t.counterElement+' class="'+t.css+'">'+t.counterText+"</"+t.counterElement+">");r(this);e(this).keyup(function(){r(this)});e(this).change(function(){r(this)})})}})(jQuery);
+
+(function($) {
+    $.fn.goTo = function() {
+        $('html, body').animate({
+            scrollTop: $(this).offset().top + 'px'
+        }, 'fast');
+        return this; // for chaining...
+    }
+})(jQuery);
 
 function validateUSPhone(phone_number) {
   return phone_number.length > 9 &&
@@ -204,6 +213,9 @@ COFFEE.customer = (function($) {
     var hideContactInfoFormAndShowOrderForm = function(cb) {
       cb = cb || function() {};
       $contactInfoForm.fadeOut(function(){
+        //TODO: Detect phone layout, hide final container
+        //http://stackoverflow.com/questions/10547876/listen-for-browser-width-for-responsive-web-design
+        //TODO: Handle resize, but not a priority.
         $orderForm.fadeIn(function() {
           cb();
         });
@@ -252,6 +264,14 @@ COFFEE.customer = (function($) {
       }
     });
 
+    $("#show-order-container-button").click(function(evt) {
+      evt.preventDefault();
+      // if ($orderForm.valid()) {
+        //TODO: Hide contact info container, show order container
+        $("#order-container").goTo();
+      // }
+    });
+
     $("#order-button").click(function(evt) {
       evt.preventDefault();
       if ($orderForm.valid()) {
@@ -290,6 +310,9 @@ COFFEE.customer = (function($) {
           alert("Ruh-roh, Raggy! Something went wrong when placing your order. Please try again!");
           $button.prop("disabled", false);
         });
+      } else {
+        // $(".logo-row").goTo();
+        $("html").goTo();
       }
     });
 
