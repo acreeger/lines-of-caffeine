@@ -4,3 +4,4 @@ public/img/akqa-logo.png
 newrelic_agent.log
 *.log
 dump
+contactInfos.json
