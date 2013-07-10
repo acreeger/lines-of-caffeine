@@ -91,15 +91,6 @@ exports.request = function(req, res) {
   }
 }
 
-function addPrefixToPhoneNumber(smsToNumber) {
-  var prefix;
-  if (smsToNumber.substring(0,2) == "+1") prefix = ""
-  else if (smsToNumber.substring(0,1) == "1") prefix = "+"
-  else prefix = "+1"
-  smsToNumber = prefix + smsToNumber;
-  return smsToNumber
-}
-
 function checkIfOrderPartOfCampaign(order, campaign, cb) {
   TargetContactInfo.isUserPartOfCampaign(order.contactInfo, campaign, function(err, result) {
     if (err) {
@@ -115,7 +106,6 @@ function checkIfOrderPartOfCampaign(order, campaign, cb) {
 
 function sendOrderStartedTextMessage(order) {
   var smsToNumber = order.cellPhone
-  smsToNumber = addPrefixToPhoneNumber(smsToNumber)
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
   var campaign = "makeathon-geek";
   //TODO: Abstract this into a campaign service, which takes an order and a campaign, returns a message.
@@ -134,7 +124,6 @@ function sendOrderStartedTextMessage(order) {
 
 function sendOrderAbortedTextMessage(order) {
   var smsToNumber = order.cellPhone
-  smsToNumber = addPrefixToPhoneNumber(smsToNumber)  //TODO: We can remove this once all old orders have been normalized.
   var smsMessage = _s.sprintf("Hi %s. Unfortunately there was a problem with your drink order. Please come see us to sort it out. Sorry about that!",
                                 order.customer.firstName
                               );
