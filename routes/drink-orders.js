@@ -104,13 +104,19 @@ function checkIfOrderPartOfCampaign(order, campaign, cb) {
   });
 }
 
+function getActiveCampaign() {
+  var campaign = getenv("ACTIVE_CAMPAIGN", "none")// makeathon-geek
+  if (campaign === "none") return null;
+  return campaign;
+}
+
 function sendOrderStartedTextMessage(order) {
   var smsToNumber = order.cellPhone
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-  var campaign = "makeathon-geek";
+  var campaign = getActiveCampaign();
   //TODO: Abstract this into a campaign service, which takes an order and a campaign, returns a message.
-  checkIfOrderPartOfCampaign(order, campaign, function(result) {
-    if (result) {
+  var sendSms = function(isPartOfCampaign) {
+    if (isPartOfCampaign) {
       smsMessage = "Your drink is nearly ready! Also, don't forget about the Make-a-thon lunch session today at noon on LL1, just for techies like you. <3"
     } else {
       smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
@@ -119,7 +125,13 @@ function sendOrderStartedTextMessage(order) {
                               );
     }
     twilioService.sendSMS(smsMessage, smsToNumber);
-  });
+  }
+
+  if (campaign) {
+    checkIfOrderPartOfCampaign(order, campaign, sendSms);
+  } else {
+    sendSms(false);
+  }
 }
 
 function sendOrderAbortedTextMessage(order) {
@@ -135,9 +147,9 @@ var EMAIL_CONF_FROM_ADDRESS = getenv("EMAIL_FROM_ADDRESS","dontwait@linesofcaffe
 function sendOrderStartedEmailMessage(order) {
   var emailAddress = order.emailAddress;
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-  var campaign = "makeathon-geek";
+  var campaign = getActiveCampaign();
 
-  checkIfOrderPartOfCampaign(order, campaign, function(result) {
+  var sendEmail = function(result) {
     var subject = _s.sprintf("Your %s will be ready soon - come get it!", drinkType);
     var body;
 
@@ -153,7 +165,13 @@ function sendOrderStartedEmailMessage(order) {
                         );
     }
     emailService.sendEmail(order.fullName, emailAddress, EMAIL_CONF_FROM_ADDRESS, subject, body);
-  });
+  }
+
+  if (campaign) {
+    checkIfOrderPartOfCampaign(order, campaign, sendEmail);
+  } else {
+    sendEmail(false);
+  }
 }
 
 function sendOrderAbortedEmailMessage(order) {
