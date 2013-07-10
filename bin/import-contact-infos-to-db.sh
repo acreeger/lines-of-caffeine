@@ -1,0 +1,1 @@
+mongoimport --collection targetcontactinfos --file contactInfos.json --jsonArray --db $MONGO_DB -h $MONGO_HOST -u $MONGO_USER -p $MONGO_PASS
