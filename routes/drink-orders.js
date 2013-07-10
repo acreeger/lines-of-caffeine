@@ -1,5 +1,6 @@
 var mongoose = require('mongoose')
   , DrinkOrder = mongoose.model('DrinkOrder')
+  , TargetContactInfo = mongoose.model('TargetContactInfo')
   , constants = require('../common/constants')
   , orderConstants = constants.order
   , twilioService = require('../services/twilio-service.js')
@@ -99,15 +100,36 @@ function addPrefixToPhoneNumber(smsToNumber) {
   return smsToNumber
 }
 
+function checkIfOrderPartOfCampaign(order, campaign, cb) {
+  TargetContactInfo.isUserPartOfCampaign(order.contactInfo, campaign, function(err, result) {
+    if (err) {
+      console.error("checkIfOrderPartOfCampaign: An error occured while checking to see if order %s is part of campaign %s: %s",order.id, campaign, JSON.stringify(err))
+      result = false;
+    } else if (result) {
+      console.log("User %s %s (%s) is part of campaign %s!", order.customer.firstName, order.customer.lastName, order.contactInfo, campaign);
+    }
+
+    cb(result);
+  });
+}
+
 function sendOrderStartedTextMessage(order) {
   var smsToNumber = order.cellPhone
-  smsToNumber = addPrefixToPhoneNumber(smsToNumber) //TODO: We can remove this once all old orders have been normalized.
+  smsToNumber = addPrefixToPhoneNumber(smsToNumber)
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-  var smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
+  var campaign = "makeathon-geek";
+  //TODO: Abstract this into a campaign service, which takes an order and a campaign, returns a message.
+  checkIfOrderPartOfCampaign(order, campaign, function(result) {
+    if (result) {
+      smsMessage = "Your drink is nearly ready! Also, don't forget about the Make-a-thon lunch session today at noon on LL1, just for techies like you. <3"
+    } else {
+      smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
                                 order.customer.firstName
                               , drinkType
                               );
-  twilioService.sendSMS(smsMessage, smsToNumber);
+    }
+    twilioService.sendSMS(smsMessage, smsToNumber);
+  });
 }
 
 function sendOrderAbortedTextMessage(order) {
@@ -124,12 +146,25 @@ var EMAIL_CONF_FROM_ADDRESS = getenv("EMAIL_FROM_ADDRESS","dontwait@linesofcaffe
 function sendOrderStartedEmailMessage(order) {
   var emailAddress = order.emailAddress;
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
-  var subject = _s.sprintf("Your %s will be ready soon - come get it!", drinkType);
-  var body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
-                              order.customer.firstName
-                            , drinkType
-                            );
-  emailService.sendEmail(order.fullName, emailAddress, EMAIL_CONF_FROM_ADDRESS, subject, body);
+  var campaign = "makeathon-geek";
+
+  checkIfOrderPartOfCampaign(order, campaign, function(result) {
+    var subject = _s.sprintf("Your %s will be ready soon - come get it!", drinkType);
+    var body;
+
+    if (result) {
+      body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nWant more free stuff? Don't forget to come to the Make-a-thon lunch session today on LL1 at noon, just for techies like you!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
+                          order.customer.firstName
+                        , drinkType
+                        );
+    } else {
+      body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
+                          order.customer.firstName
+                        , drinkType
+                        );
+    }
+    emailService.sendEmail(order.fullName, emailAddress, EMAIL_CONF_FROM_ADDRESS, subject, body);
+  });
 }
 
 function sendOrderAbortedEmailMessage(order) {
