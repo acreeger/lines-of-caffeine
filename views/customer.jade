@@ -1,10 +1,12 @@
 extends layout
 block head
   link(rel='stylesheet', media='screen', href='/stylesheets/customer.css')
-  link(rel='stylesheet', media='(max-width: 480px)', href='/stylesheets/customer.480w.css')
+  link(rel='stylesheet', media='(max-width: 767px)', href='/stylesheets/customer.767w.css')
     //- could use max-device-width?
 
 block content
+  #phone-marker.visible-phone
+  #long-screen-phone-marker
   .disabled-warnings.hidden-phone
     if (!twilioEnabled)
       p Text messaging functionality has been disabled.
@@ -94,7 +96,7 @@ block content
           .span1.align-right
             button#show-order-container-button.btn.btn-primary Next
 
-      #order-container
+      #order-container.hidden-phone-soft
         .row
           .span12.input-helper-text.align-left
             em.input-helper-text I would like a...
@@ -121,7 +123,7 @@ block content
               option(value="skim") with non-fat milk
               option(value="soy") with soy milk
               option(value="none") with no milk
-      #final-container
+      #final-container.hidden-phone-soft
         .row
           .span12.align-center
             button#no-special-requests.add-special-instructions.btn.btn-large(data-toggle="modal",data-target="#special-instructions") Any special requests?

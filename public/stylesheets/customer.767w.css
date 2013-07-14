@@ -2,12 +2,17 @@ body {
   padding-top: 5px;
 }
 
+.hidden-phone-soft { /*A hidden-phone class that doesn't mark itself as important*/
+  display: none
+}
+
 .logo-row img {
   width: 60%;
 }
 
 #first-time-question p:first-child {
   font-size: 20px;
+  margin-bottom: 2px;
 }
 
 #first-time-question p {
@@ -76,7 +81,31 @@ select.caff-level {
 }
 
 #order-container {
-  margin-top: 100px;
+  margin-top: 10px;
+}
+
+#no-special-requests, #entered-special-requests {
+  margin-top: 15px;
+}
+
+.wait-infos {
+  width: 95%%;
+}
+
+#long-wait-caution {
+  font-weight: bolder;
+  font-size: 11px;
+  width: 100%;
+  background-color: red
+  color: white;
+  text-align: center;
+}
+
+@media (min-device-height: 567px) and (-webkit-min-device-pixel-ratio: 2) {
+/* iPhone 5 or iPod Touch 5th generation or other phone with long screen */
+  #long-screen-phone-marker {
+    display: block;
+  }
 }
 
 

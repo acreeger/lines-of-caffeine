@@ -2,6 +2,10 @@ body {
 	padding-top: 50px;
 }
 
+#long-screen-phone-marker {
+  display: none
+}
+
 .logo-row {
   text-align: center;
 }
@@ -138,7 +142,7 @@ body {
 }
 
 #special-instructions textarea {
-  width: 450px;
+  width: 96%;
   height: 110px;
 }
 

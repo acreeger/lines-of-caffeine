@@ -48,6 +48,24 @@ COFFEE.customer = (function($) {
       $contactInfoForm.show();
     }
 
+    function isLongScreenPhone() {
+      return $("#long-screen-phone-marker").is(":visible");
+    }
+    
+    function isPhone() {
+      return $("#phone-marker").is(":visible");
+    }
+
+    //Initialization Code
+    function initPageLayout() {
+      if (isPhone()) {
+        $("#no-special-requests").removeClass("btn-large"); //HACK: I'd rather do this declaratively, but that gets to complicated with all the toggling
+      }
+    }
+
+    initPageLayout();
+
+
     var handleSpecialInstructions = function(specialInstructions) {
       var hasSpecialInstructions = specialInstructions.length > 0;
       if (hasSpecialInstructions) {
@@ -216,10 +234,19 @@ COFFEE.customer = (function($) {
         //TODO: Detect phone layout, hide final container
         //http://stackoverflow.com/questions/10547876/listen-for-browser-width-for-responsive-web-design
         //TODO: Handle resize, but not a priority.
-        $orderForm.fadeIn(function() {
-          cb();
-        });
+        $orderForm.fadeIn(cb);
       });
+    }
+
+    var hideUserContainerAndShowOrderContainerAndFinalContainer = function(cb) {
+      cb = cb || function() {};
+      var fadeOutSelector = "#user-container";
+      if (isPhone() && !isLongScreenPhone()) {
+        fadeOutSelector = "#user-container, .logo-row";
+      }
+      $(fadeOutSelector).fadeOut(function() {
+        $("#order-container, #final-container").fadeIn(cb)
+      })
     }
 
     $("#never-used-it-button").click(function(evt) {
@@ -266,10 +293,9 @@ COFFEE.customer = (function($) {
 
     $("#show-order-container-button").click(function(evt) {
       evt.preventDefault();
-      // if ($orderForm.valid()) {
-        //TODO: Hide contact info container, show order container
-        $("#order-container").goTo();
-      // }
+      if ($orderForm.valid()) {
+        hideUserContainerAndShowOrderContainerAndFinalContainer();
+      }
     });
 
     $("#order-button").click(function(evt) {
