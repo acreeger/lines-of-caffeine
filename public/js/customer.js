@@ -46,6 +46,7 @@ COFFEE.customer = (function($) {
       $("#special-instructions textarea").change();
       $orderForm.hide();
       $contactInfoForm.show();
+      $(".logo-row").show();
     }
 
     function isLongScreenPhone() {
