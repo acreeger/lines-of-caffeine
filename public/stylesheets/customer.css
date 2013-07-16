@@ -2,6 +2,19 @@ body {
 	padding-top: 50px;
 }
 
+#long-screen-phone-marker {
+  display: none
+}
+
+.logo-row {
+  text-align: center;
+}
+
+.logo-row img {
+  width: 270px;
+  margin-left: 26px;
+}
+
 .errorLabelRow {
   min-height: 25px;
   color: #b94a48;
@@ -13,7 +26,11 @@ body {
   color:#aaa;
 }
 
-.order-row, .order-row select {
+.order-row {
+  margin-top: 5px;
+}
+
+/*.order-row, */.order-row select {
   font-size: 26px;
   height: 56px;
   line-height: 56px;
@@ -31,10 +48,6 @@ body {
   margin-top: 60px;
   padding: 30px 30px;
   font-size: 50.5px;
-}
-
-.input-container #contact-info-prescreen::-webkit-input-placeholder {
-  font-size: 26px;
 }
 
 .btn-primary {
@@ -75,6 +88,10 @@ body {
   font-size: 30px;
   height: 40px;
   width: 100%;
+}
+
+.input-container #contact-info-prescreen::-webkit-input-placeholder {
+  font-size: 26px;
 }
 
 .input-container input::-webkit-input-placeholder {
@@ -125,7 +142,7 @@ body {
 }
 
 #special-instructions textarea {
-  width: 450px;
+  width: 96%;
   height: 110px;
 }
 
