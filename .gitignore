@@ -5,3 +5,4 @@ newrelic_agent.log
 *.log
 dump
 contactInfos.json
+make-a-thon-final-contacts.json

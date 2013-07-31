@@ -117,7 +117,7 @@ function sendOrderStartedTextMessage(order) {
   //TODO: Abstract this into a campaign service, which takes an order and a campaign, returns a message.
   var sendSms = function(isPartOfCampaign) {
     if (isPartOfCampaign) {
-      smsMessage = "Your drink is nearly ready! Also, don't forget about the Make-a-thon lunch session today at noon on LL1, just for techies like you. <3"
+      smsMessage = "Your drink is nearly ready! Also want an iPad Mini or Nexus 7? Take part in AKQA's Make-a-thon for a chance to win one, this Friday @ 5pm"
     } else {
       smsMessage = _s.sprintf("Hi %s, your %s will be ready soon. Please come grab it before it gets cold! Love, the folks from Culture and Wellness. <3",
                                 order.customer.firstName
@@ -149,12 +149,12 @@ function sendOrderStartedEmailMessage(order) {
   var drinkType = constants.drinkTypes[order.drinks[0].drinkType] || order.drinks[0].drinkType
   var campaign = getActiveCampaign();
 
-  var sendEmail = function(result) {
+  var sendEmail = function(isPartOfCampaign) {
     var subject = _s.sprintf("Your %s will be ready soon - come get it!", drinkType);
     var body;
 
-    if (result) {
-      body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nWant more free stuff? Don't forget to come to the Make-a-thon lunch session today on LL1 at noon, just for techies like you!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
+    if (isPartOfCampaign) {
+      body = _s.sprintf("Hi %s!\n\nYour %s will be ready soon. Please come grab it before it gets cold!\n\nWant more free stuff? Like, you know, a brand new Nexus 7 or iPad Mini? You can win one at AKQA's Make-a-thon 2013, starting this Friday @ 5pm!\n\nLove,\n\nThe folks from Culture and Wellness. <3",
                           order.customer.firstName
                         , drinkType
                         );
