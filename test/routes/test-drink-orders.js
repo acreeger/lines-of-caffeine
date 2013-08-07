@@ -3,7 +3,42 @@ var request = require('supertest');
 
 var helper = require("../drink-order-helper")
 
+var TEST_KEY = "TEST_KIOSK_KEY"
+
 describe("drink-order routes" ,function() {
+  describe("POST /api/order", function() {
+    it("should fail when no key is passed and the station is not accepting public orders");
+    it("should succeed when no key is passed and the station is allowing public orders");
+    it("should succeed when no key is passed and the station is allowing public orders");
+    it("should always fail when the incorrect key is passed");
+    it("should always succeed when the correct key is passed and order is valid", function(done) {
+      var key = TEST_KEY;
+      var url = "/api/order?key=" + TEST_KEY
+      var order = {
+        "customer[firstName]" : "Testy"
+      , "customer[lastName]" : "McTestFace"
+      , "customer[contactInfo]" : "an@emailaddress.com"
+      , "drinks[0][strength]" : "full"
+      , "drinks[0][drinkType]" : "americano"
+      , "drinks[0][milk]" : "skim"
+      }
+      request(app)
+        .post(url)
+        .type('form')
+        .send(order)
+        .expect(200)
+        .end(function(err, res) {
+          if (err) {
+            done(err)
+          } else {
+            var obj = res.body;
+            obj.should.be.a("object");
+            obj.should.have.property("success", true)
+            obj.should.have.property("data")            
+          }
+        })
+    });
+  });
   describe('GET /api/order/searchByContact', function(){
     beforeEach(function(done){
       helper.removeAllOrders(function(err) {
