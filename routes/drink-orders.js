@@ -14,7 +14,8 @@ exports.create = function(req, res) {
   var reqBody = req.body;
   //TODO: Seems insecure
   var order = new DrinkOrder(reqBody);
-  order.contactInfo = reqBody.customer.contactInfo;
+  console.log("Creating order for %s %s (%s).", reqBody.customer.firstName, reqBody.customer.lastName, order._id);
+  order.contactInfo = reqBody.customer.contactInfo;  
   order.save(function(err) {
     if (err) {
       var status = (err instanceof CustomValidationError || typeof err.errors !== "undefined") ? 400 : 500
@@ -25,7 +26,19 @@ exports.create = function(req, res) {
       }
       util.sendError(res, err, status);
     } else {
-      res.json({success:true, data: order});
+      console.log("Order succesfully created for %s %s (%s), verifying that it was actually created in DB.", reqBody.customer.firstName, reqBody.customer.lastName, order._id);
+      DrinkOrder.findOne({_id: order._id}, function(verificationErr, verifiedOrder) {
+        if (verificationErr) {
+          console.log("WARNING: Error occured while order was being verified.",order,verificationErr);
+          util.sendError(res, verificationErr, 500); //TODO: update err
+        } else if (verifiedOrder) {
+          console.log("Order for %s %s (verified id: %s) verified in DB.", reqBody.customer.firstName, reqBody.customer.lastName, verifiedOrder._id);
+          res.json({success:true, data: order});
+        } else {
+          console.log("WARNING: Order could not be found in DB after it was apparently created:",order);
+          util.sendError(res, "Order was not found in DB after it was apparently created", 500); //TODO: update err
+        }
+      });
     }
   });
 
